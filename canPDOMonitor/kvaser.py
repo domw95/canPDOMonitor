@@ -50,7 +50,7 @@ class Kvaser(Device):
         
     def _start(self):
         # stop the device just in case
-        self._stop()
+        #self._stop()
         
         # clear the buffer
         self.ch.iocontrol.flush_rx_buffer()
@@ -78,6 +78,9 @@ class Kvaser(Device):
         
         # clear the buffer
         self.ch.iocontrol.flush_rx_buffer()
+        
+        # give the canlib a change to garbage collect
+        time.sleep(1)
         
     def _read_loop(self):
         """
@@ -110,8 +113,10 @@ class Kvaser(Device):
         None.
 
         """
-        print("Queue size: {}".format(self.ch.iocontrol.rx_buffer_level))
-        while(True):
+        print("\rQueue size: {}".format(self.ch.iocontrol.rx_buffer_level),
+              flush=True,end="\r")
+        while(self.reading.is_set()):
+            
             try:
                 # try get a message
                 frame = self.ch.read()
@@ -134,7 +139,7 @@ if __name__ == "__main__":
     k = Kvaser()
     k.start()
     count = 0
-    while(count < 1000):
+    while(count < 100):
         frame = k.get_frame()
         if (frame is not None):
             count = count + 1

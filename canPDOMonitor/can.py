@@ -61,10 +61,15 @@ class Device(ABC):
         None.
 
         """
+        # add None to queue to indicate to consumer to stop
+        self._add_to_queue(None)
+        
         # stop the device
         with self.active_lock:
             self._stop()
             self.active = False
+        
+        
         
         
     def get_frame(self):
@@ -83,8 +88,7 @@ class Device(ABC):
         """
         
         # Blocking call to get function
-        frame = self.frame_queue.get(True)
-        return frame        
+        return self.frame_queue.get(True)
         
     def clear_queue(self):
         """
