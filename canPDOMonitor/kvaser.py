@@ -1,4 +1,4 @@
-from device import Device
+from can import Device, Frame
 from canlib import canlib
 import threading
 import time
@@ -92,7 +92,7 @@ class Kvaser(Device):
         # check that stop hasnt been called
         while(self.reading.is_set()):
             # Get all the messages from the device
-            self._get_messages()
+            self._read_messages()
             # wait for a length of time to let other threads run
             # 10ms = 40 messages
             time.sleep(0.01)
@@ -101,7 +101,7 @@ class Kvaser(Device):
             
             
     
-    def _get_messages(self):
+    def _read_messages(self):
         """
         Reads all the messages from device and places them in queue
 
@@ -118,7 +118,9 @@ class Kvaser(Device):
                 
                 # If got a frame, convert to custom frame type and place in 
                 # queue
-                #print(frame.id)
+                self._add_to_queue(Frame(id=frame.id,data=frame.data,
+                                   timestamp=frame.timestamp,dlc=frame.dlc))
+                # print(type(frame.data))
                 
             except canlib.CanNoMsg:
                 # no more messages available
@@ -131,7 +133,14 @@ class KvaserError(Exception):
 if __name__ == "__main__":
     k = Kvaser()
     k.start()
-    for i in range(10):
-        time.sleep(1)
+    count = 0
+    while(count < 1000):
+        frame = k.get_frame()
+        if (frame is not None):
+            count = count + 1
+            print(frame.id)            
+        else:
+            break
     k.stop()
+    time.sleep(1)
     
