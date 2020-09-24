@@ -113,8 +113,8 @@ class Kvaser(Device):
         None.
 
         """
-        print("\rQueue size: {}".format(self.ch.iocontrol.rx_buffer_level),
-              flush=True,end="\r")
+        # print("\rQueue size: {}".format(self.ch.iocontrol.rx_buffer_level),
+              # flush=True,end="\r")
         while(self.reading.is_set()):
             
             try:

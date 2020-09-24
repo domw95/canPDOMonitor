@@ -1,5 +1,6 @@
 class Datapoint:
-    def __init__(self,name,value,time,timestamp,index,raw_value=None):
+    def __init__(self,name=None,value=0,time=0,
+                 timestamp=0,index=0,raw_value=None):
         # signal name: string
         self.name = name
         # value: float
