@@ -4,15 +4,21 @@ Virtual can.Device for testing programs
 import threading
 import time
 import can
+import pdo
+import struct
+
 
 class Virtual(can.Device):
+
     """
     Virtual device class that sends all sorts of data in PDO frames
 
     """
-    def __init__(self,n_pdo=4):
+
+    def __init__(self, n_pdo=4):
+
         # super init with bitrate that doesnt matter
-        super().__init__(bitrate = "1M")
+        super().__init__(bitrate="1M")
 
         self.gen_thread = threading.Thread(target=self._gen_loop)
 
@@ -28,7 +34,7 @@ class Virtual(can.Device):
         self.nframe_send = round(self.frame_rate * self.sleep_time)
 
         # order in which to send PDOs
-        self.order = [0x181,0x281,0x381,0x481]
+        self.order = [0x181, 0x281, 0x381, 0x481]
         self.order_ind = 0
 
     def _start(self):
@@ -60,20 +66,33 @@ class Virtual(can.Device):
             for i in range(self.nframe_send):
                 self._gen_frame()
 
-
     def _gen_frame(self):
-        self._add_to_queue(can.Frame(id=self.order[self.order_ind],
-                            timestamp=time.time() - self.start_time))
+        frame = can.Frame(id=self.order[self.order_ind],
+                          timestamp=time.time() - self.start_time)
+        if frame.id == 0x181:
+            frame.data = pdo.num_2_single(1)
+        elif frame.id == 0x281:
+            pass
+        elif frame.id == 0x381:
+            pass
+        elif frame.id == 0x481:
+            pass
+
+        self._add_to_queue(frame)
+
         self.order_ind = self.order_ind + 1
         if self.order_ind >= len(self.order):
             self.order_ind = 0
         self.frame_count = self.frame_count + 1
 
+
 if __name__ == "__main__":
     print("Starting Virtual Can Device")
     v = Virtual()
     v.start()
-    for i in range(10000):
+    for i in range(10):
         frame = v.get_frame()
-        print("id: {},time: {:.3f}".format(frame.id,frame.timestamp))
+        print("id: {},time: {:.3f}, data:{}".format(frame.id,
+                                                    frame.timestamp,
+                                                    frame.data))
     v.stop()
