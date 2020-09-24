@@ -5,7 +5,7 @@ import threading
 import time
 import can
 import pdo
-import struct
+import math
 
 
 class Virtual(can.Device):
@@ -36,6 +36,9 @@ class Virtual(can.Device):
         # order in which to send PDOs
         self.order = [0x181, 0x281, 0x381, 0x481]
         self.order_ind = 0
+
+        # total datapoints sent
+        self.data_count = 0
 
     def _start(self):
         self.start_time = time.time()
@@ -70,7 +73,9 @@ class Virtual(can.Device):
         frame = can.Frame(id=self.order[self.order_ind],
                           timestamp=time.time() - self.start_time)
         if frame.id == 0x181:
-            frame.data = pdo.num_2_single(1)
+            value = math.sin(2*math.pi*1*self.data_count/1000)
+            frame.data[0:4] = pdo.num_2_single(value)
+            frame.data[4:8] = pdo.num_2_single(2)
         elif frame.id == 0x281:
             pass
         elif frame.id == 0x381:
@@ -82,7 +87,9 @@ class Virtual(can.Device):
 
         self.order_ind = self.order_ind + 1
         if self.order_ind >= len(self.order):
+            # have reached end of data
             self.order_ind = 0
+            self.data_count = self.data_count + 1
         self.frame_count = self.frame_count + 1
 
 

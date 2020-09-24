@@ -44,13 +44,13 @@ class PDOConverter:
 
         # total messages recieved in running mode
         self.frame_count = 0
-        
+
         # list of datapoints at current timestep
         self.datapoints = []
-        
+
         # queue with each item a list of datapoints at a particular timestep
         self.data_queue = queue.Queue()
-        
+
         # current index of datapoint timestep
         self.data_count = 0
 
@@ -106,15 +106,15 @@ class PDOConverter:
             if (self.pre_msg_count):
                 self.pre_msg_count = self.pre_msg_count - 1
                 continue
-            
-            
+
+
             # pass the frame to processor
             self._process_frame(frame)
             # print(frame.id,flush=True)
 
         self.read_active.clear()
-        
-    
+
+
 
     def _process_frame(self, frame):
         """
@@ -141,23 +141,23 @@ class PDOConverter:
         if (self.state == "Running"):
             # check frame order
             self._check_frame_order(frame)
-            
+
             # convert the frame to datpoints and add to list
             self._extract_datapoints(frame,self.format.frame[frame.id])
-            
+
             # check if at end of timestep
             if frame.id == self.format.order[-1]:
                 # place datapoint list onto queue for consumer
                 self.data_queue.put(self.datapoints.copy())
-                
+
                 # clear the list
                 self.datapoints = []
-                
+
                 # increment counter
                 self.data_count = self.data_count + 1
-                
+
             self.frame_count = self.frame_count + 1
-            
+
 
     def _check_frame_order(self, frame):
         """
@@ -183,32 +183,32 @@ class PDOConverter:
             raise FrameOrderError("{},{},{}".format(frame.id,
                                                     expected_ind,
                                                     self.prev_frame_ind))
-            
+
     def _extract_datapoints(self,frame,frame_format):
         """
         Extracts the data from the frame according to format, adds to list
         """
         # go through at least 2 for single, 4 for 7Q8
         for i in range(4):
-            
+
             if frame_format.use7Q8:
                 # extract the value
                 value = f7Q8_2_num(frame.data[2*i:(2*i)+2])
-                
+
             elif i >= 2:
                 # out of range for single, return
                 return
             else:
                 # extract single value
                 value = single_2_num(frame.data[4*i:(4*i)+4])
-            
+
             # create a new datapoint
             datapoint = Datapoint(name=frame_format.name[i])
-            
+
             # check if gain and offset required and add value
             offset = frame_format.offset[i]
-            gain = frame_format.gain[i] 
-            
+            gain = frame_format.gain[i]
+
             if (offset == 0 and frame_format.gain[i] == 1):
                 # normal signal, pass straight through
                 datapoint.value = value
@@ -216,15 +216,15 @@ class PDOConverter:
                 # apply gain and offset
                 datapoint.raw_value = value
                 datapoint.value = (value + offset)*gain
-            
+
             # add the timestamp and time info
             datapoint.timestamp = frame.timestamp
             datapoint.time = self.data_count/self.format.rate
             datapoint.index = self.data_count
-            
+
             # add the datapoint to the list
             self.datapoints.append(datapoint)
-        
+
 
 
 class FrameOrderError(Exception):
@@ -327,7 +327,7 @@ if __name__ == "__main__":
     pdo_converter.start()
     while(pdo_converter.frame_count < 1000):
         data_list = pdo_converter.data_queue.get()
-        for datapoint in data_list:    
+        for datapoint in data_list:
             print("{}:{},{}".format(datapoint.name,datapoint.value,
                                     datapoint.time))
 
