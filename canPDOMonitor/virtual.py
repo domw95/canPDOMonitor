@@ -6,6 +6,7 @@ import time
 import can
 import pdo
 import math
+import random
 
 
 class Virtual(can.Device):
@@ -70,36 +71,38 @@ class Virtual(can.Device):
                 self._gen_frame()
 
     def _gen_frame(self):
+        frame = 0
         frame = can.Frame(id=self.order[self.order_ind],
                           timestamp=time.time() - self.start_time)
         if frame.id == 0x181:
             value = math.sin(2*math.pi*1*self.data_count/1000)
             frame.data[0:4] = pdo.num_2_single(value)
-            frame.data[4:8] = pdo.num_2_single(2)
+            # frame.data[4:8] = pdo.num_2_single(random.gauss(0, 1))
+            frame.data[4:8] = pdo.num_2_single(self.data_count)
         elif frame.id == 0x281:
-            pass
+            frame.data[0:2] = pdo.num_2_f7Q8(1)
         elif frame.id == 0x381:
             pass
         elif frame.id == 0x481:
             pass
 
         self._add_to_queue(frame)
-
         self.order_ind = self.order_ind + 1
         if self.order_ind >= len(self.order):
             # have reached end of data
             self.order_ind = 0
             self.data_count = self.data_count + 1
         self.frame_count = self.frame_count + 1
+        print(frame.data)
 
 
 if __name__ == "__main__":
     print("Starting Virtual Can Device")
     v = Virtual()
     v.start()
-    for i in range(10):
-        frame = v.get_frame()
-        print("id: {},time: {:.3f}, data:{}".format(frame.id,
-                                                    frame.timestamp,
-                                                    frame.data))
+    for i in range(100):
+        v.get_frame()
+        # print("id: {},time: {:.3f}, data:{}".format(frame.id,
+        #                                             frame.timestamp,
+        #                                             frame.data))
     v.stop()

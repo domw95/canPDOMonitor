@@ -6,7 +6,7 @@ device = Virtual()
 
 # set PDO format
 format = Format()
-format.add(FrameFormat(0x181, use7Q8=False,name=["Sine","Rand"]))
+format.add(FrameFormat(0x181, use7Q8=False, name=["Sine", "Rand"]))
 format.add(FrameFormat(0x281))
 format.add(FrameFormat(0x381))
 format.add(FrameFormat(0x481))
@@ -26,6 +26,8 @@ while pdo_converter.data_count < 1000:
 
     # display info from first one
     d = datapoints[0]
+    print("Time:{}, {}:{} | ".format(d.time, d.name, d.value), end='')
+    d = datapoints[1]
     print("Time:{}, {}:{}".format(d.time, d.name, d.value))
 
 pdo_converter.stop()

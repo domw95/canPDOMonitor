@@ -289,8 +289,13 @@ def num_2_f7Q8(num):
     If the value of num is less than -128 or greater than 127.99,
     the value will be saturated
     """
-    pass
-
+    # multiply to int16 then pack that
+    num = round(num * 256)
+    if num < -(2**15):
+        num = -(2**15)
+    elif num > ((2**15)-1):
+        num = ((2**15)-1)
+    return bytearray(struct.pack('<h', num))
 
 def f7Q8_2_num(byte_arr):
     """
