@@ -165,10 +165,9 @@ class Frame:
     """
 
     def __init__(self, id=0,
-                 data=bytearray((0, 0, 0, 0, 0, 0, 0, 0)),
                  timestamp=0, dlc=8, error=False):
         self.id = id
-        self.data = data
+        self.data = bytearray((0, 0, 0, 0, 0, 0, 0, 0))
         self.timestamp = timestamp
         self.dlc = dlc
         self.error = error
