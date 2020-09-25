@@ -23,7 +23,7 @@ class Virtual(can.Device):
     def __init__(self):
 
         # super init with bitrate that doesnt matter
-        super().__init__(bitrate="1M")
+        super().__init__(bitrate=1000000)
 
         self.gen_thread = threading.Thread(target=self._gen_loop)
 
@@ -62,7 +62,7 @@ class Virtual(can.Device):
 
         call :py:func:`self.thread_active.clear` to end
         """
-        print("Starting frame generation loop")
+        logger.info("Frame Generation Started")
         while(self.thread_active.is_set()):
             # check how long its been running and how many frames should
             # have been sent
@@ -105,17 +105,25 @@ class Virtual(can.Device):
             self.data_count = self.data_count + 1
         self.frame_count = self.frame_count + 1
 
+def _test():
+    """
+    Creates a virtual can Device and generates 100 frames
+    """
+    logging.basicConfig(level=logging.DEBUG)
+    logger.info("Running Virtual CAN Device test")
+    v = Virtual()
+    logger.info("Starting Device")
+    v.start()
+    for i in range(10):
+        f = v.get_frame()
+        logger.debug("id: {},time: {:.3f}, data:{}".format(f.id,
+                                                    f.timestamp,
+                                                    f.data))
+    v.stop()
+
 
 # set up a logger for this module
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-    print("Starting Virtual Can Device")
-    v = Virtual()
-    v.start()
-    for i in range(100):
-        f = v.get_frame()
-        print("id: {},time: {:.3f}, data:{}".format(f.id,
-                                                    f.timestamp,
-                                                    f.data))
-    v.stop()
+    _test()

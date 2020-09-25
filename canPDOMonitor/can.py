@@ -15,6 +15,7 @@ class Device(ABC):
     classes must implement _start and _stop methods
     CAN frames must be read from devices and placed into frame_queue async
     and thread safe following call to _start method
+    :param bitrate: CAN Bus bitrate in b/s
     """
 
     # maximum number of CAN frames to hold in queue
