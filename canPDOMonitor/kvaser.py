@@ -1,4 +1,4 @@
-from can import Device, Frame
+from .can import Device, Frame
 from canlib import canlib
 import threading
 import time

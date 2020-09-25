@@ -2,8 +2,8 @@
 
 import threading
 import time
-from . import can
-from . import pdo
+from canPDOMonitor import can
+from canPDOMonitor import pdo
 import math
 import random
 import logging

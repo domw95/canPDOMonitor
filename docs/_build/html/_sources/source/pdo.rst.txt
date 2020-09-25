@@ -1,0 +1,7 @@
+pdo module
+==========
+
+.. automodule:: pdo
+   :members:
+   :undoc-members:
+   :show-inheritance:
