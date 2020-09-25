@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Sep 23 14:32:57 2020
-
-@author: Dom
-"""
-
 import threading
 import queue
 import time

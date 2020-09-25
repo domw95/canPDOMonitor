@@ -1,0 +1,83 @@
+:mod:`canPDOMonitor.kvaser`
+===========================
+
+.. py:module:: canPDOMonitor.kvaser
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   canPDOMonitor.kvaser.Kvaser
+
+
+
+.. data:: bitrates
+   
+
+   
+
+.. py:class:: Kvaser(bitrate='1M', channel=0)
+
+   Bases: :class:`can.Device`
+
+   Class for communicating with kvaser hardware using the kvaser canlib
+
+   inherits from Device
+
+   .. method:: _start(self)
+
+      Activates the bus, clears the queue/buffer, starts populating queue
+
+      Is responsible for reading messages on bus and passing frames
+      to queue.  This is specific to hardware, using callbacks, asyncio etc
+
+      Returns
+      -------
+      None.
+
+
+   .. method:: _stop(self)
+
+      Exits the bus and clears the queue, stop adding frames to queue
+
+      Returns
+      -------
+      None.
+
+
+   .. method:: _read_loop(self)
+
+      Started in thread. Continuously fetches all the message on device
+
+      Returns
+      -------
+      None.
+
+
+   .. method:: _read_messages(self)
+
+      Reads all the messages from device and places them in queue
+
+      Returns
+      -------
+      None.
+
+
+
+.. py:exception:: KvaserError(msg='Kvaser Error')
+
+   Bases: :class:`Exception`
+
+   Common base class for all non-exit exceptions.
+
+
+.. data:: k
+   
+
+   
+

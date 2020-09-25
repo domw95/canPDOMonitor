@@ -1,0 +1,145 @@
+:mod:`canPDOMonitor.pdo`
+========================
+
+.. py:module:: canPDOMonitor.pdo
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   canPDOMonitor.pdo.PDOConverter
+   canPDOMonitor.pdo.Format
+   canPDOMonitor.pdo.FrameFormat
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   canPDOMonitor.pdo.num_2_f7Q8
+   canPDOMonitor.pdo.f7Q8_2_num
+   canPDOMonitor.pdo.num_2_single
+   canPDOMonitor.pdo.single_2_num
+
+
+.. py:class:: PDOConverter(device, format)
+
+   Pulls can frames from can.Device, converts them into data
+
+   Requires an active can.Device and Format instance to take raw frames
+   and convert them into data
+
+   .. method:: start(self)
+
+      Starts the CAN hardware device and a thread to read the frames
+
+
+
+   .. method:: stop(self)
+
+      Stops the underlying can Device and the read thread
+
+      Current implmentation will read at most 1 or 2 more can frames from
+      queue before stopping
+
+
+   .. method:: _read_loop(self)
+
+      Infinite loop called in thread to pull frames from device and process
+
+
+
+   .. method:: _process_frame(self, frame)
+
+      Takes a frame and uses format to convert to signals
+
+      Parameters
+      ----------
+      frame : can.Frame
+
+
+   .. method:: _check_frame_order(self, frame)
+
+      Takes frame, checks id against format.order using prev frame index
+
+      Parameters
+      ----------
+      frame : Frame
+          DESCRIPTION.
+
+
+   .. method:: _extract_datapoints(self, frame, frame_format)
+
+      Extracts the data from the frame according to format, adds to list
+
+
+
+.. py:exception:: FrameOrderError(msg)
+
+   Bases: :class:`Exception`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ThreadCloseError(msg)
+
+   Bases: :class:`Exception`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:class:: Format(rate=1000)
+
+   Contains all PDO format info for the incoming messages
+
+   Init an instance and use add function to add a FrameFormat with id
+   the order in which the frames are added determines expected order
+   of frames on the bus
+
+   .. method:: add(self, frame_format)
+
+
+
+.. py:class:: FrameFormat(id, active=True, use7Q8=True, gain=[1, 1, 1, 1], offset=[0, 0, 0, 0], name=None)
+
+   Specifies the format of a PDO frame
+
+   Used in conjunction with Format which holds all details of incoming PDO
+   frames and the order which they are expected
+
+
+.. function:: num_2_f7Q8(num)
+
+   returns a 2 byte array (LSB) of the given number in 7Q8 format
+
+   If the value of num is less than -128 or greater than 127.99,
+   the value will be saturated
+
+
+.. function:: f7Q8_2_num(byte_arr)
+
+   Converts the given LSB 2 byte array to a number using 7Q8 format
+
+
+.. function:: num_2_single(num)
+
+   Converts the given number to 4 byte array (LSB) in single format
+
+
+.. function:: single_2_num(byte_arr)
+
+   Converts the LSB 4 byte array to a single float number
+
+
+.. data:: device
+   
+
+   
+

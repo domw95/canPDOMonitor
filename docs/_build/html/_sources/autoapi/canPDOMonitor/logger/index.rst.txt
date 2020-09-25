@@ -1,0 +1,69 @@
+:mod:`canPDOMonitor.logger`
+===========================
+
+.. py:module:: canPDOMonitor.logger
+
+.. autoapi-nested-parse::
+
+   Created on Thu Sep 24 15:39:29 2020
+
+   @author: Research
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   canPDOMonitor.logger.DataLog
+
+
+
+.. py:class:: DataLog(filename, trigger=None)
+
+   Writes datapoints to file
+
+   .. method:: start(self)
+
+      Starts logging data that is fed to it, or waits for trigger
+
+      Starts running the write to file thread, which will place
+      data in file or wait until trigger to do so
+
+      Returns
+      -------
+      None.
+
+
+   .. method:: stop(self)
+
+
+   .. method:: put(self, datapoints)
+
+      External function for placing lists of datapoints on queue
+
+      Will put datapoints on queue if the logger is active
+
+      Parameters
+      ----------
+      datapoints : TYPE
+          DESCRIPTION.
+
+      Returns
+      -------
+      None.
+
+
+   .. method:: _write_loop(self)
+
+
+
+.. data:: device
+   
+
+   
+

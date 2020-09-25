@@ -1,0 +1,33 @@
+:mod:`canPDOMonitor.manager`
+============================
+
+.. py:module:: canPDOMonitor.manager
+
+.. autoapi-nested-parse::
+
+   Created on Thu Sep 24 12:52:32 2020
+
+   @author: Research
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   canPDOMonitor.manager.Manager
+
+
+
+.. py:class:: Manager
+
+   Main class for managing PDO conversion, logging, gui etc
+
+   contains a PDO converter object to bring in datapoints from can bus
+   routes these to any logger or graphics that are active
+
+

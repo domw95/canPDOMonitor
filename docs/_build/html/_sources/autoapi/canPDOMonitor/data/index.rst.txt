@@ -1,0 +1,21 @@
+:mod:`canPDOMonitor.data`
+=========================
+
+.. py:module:: canPDOMonitor.data
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   canPDOMonitor.data.Datapoint
+
+
+
+.. py:class:: Datapoint(name=None, value=0, time=0, timestamp=0, index=0, raw_value=None)
+
+

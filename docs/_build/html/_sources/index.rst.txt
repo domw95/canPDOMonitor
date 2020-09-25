@@ -1,13 +1,15 @@
-.. CAN PDO Monitor documentation master file, created by
-   sphinx-quickstart on Tue Sep 22 16:35:17 2020.
+.. canPDOMonitor documentation master file, created by
+   sphinx-quickstart on Fri Sep 25 09:22:07 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to CAN PDO Monitor's documentation!
-===========================================
+Welcome to canPDOMonitor's documentation!
+=========================================
+.. automodule:: pdo
+    :members:
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: Contents:
 
 

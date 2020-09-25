@@ -1,19 +1,22 @@
-"""
-Virtual can.Device for testing programs
-"""
+"""Virtual can.Device for testing programs."""
+
 import threading
 import time
 import can
 import pdo
 import math
 import random
-import copy
+import logging
+
+# set up a logger for this module
+logger = logging.getLogger(__name__)
 
 
 class Virtual(can.Device):
-
     """
     Virtual device class that sends all sorts of data in PDO frames
+
+    inherits from :class:`can.Device`
 
     """
 
@@ -103,8 +106,8 @@ if __name__ == "__main__":
     v = Virtual()
     v.start()
     for i in range(100):
-        f= v.get_frame()
-        # print("id: {},time: {:.3f}, data:{}".format(f.id,
-        #                                             f.timestamp,
-        #                                             f.data))
+        f = v.get_frame()
+        print("id: {},time: {:.3f}, data:{}".format(f.id,
+                                                    f.timestamp,
+                                                    f.data))
     v.stop()
