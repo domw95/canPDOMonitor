@@ -2,7 +2,7 @@ import threading
 import queue
 import time
 import struct
-from data import Datapoint
+from .data import Datapoint
 
 
 class PDOConverter:

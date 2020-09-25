@@ -21,18 +21,16 @@ Classes
 
 
 
-.. data:: logger
-   
-
-   
-
-.. py:class:: Virtual(n_pdo=4)
+.. py:class:: Virtual
 
    Bases: :class:`can.Device`
 
    Virtual device class that sends all sorts of data in PDO frames
 
-   inherits from :class:`can.Device`
+   inherits from :class:`can.Device`.
+
+   Streams data at 1kHz, single float on 0x181
+   and 7Q8 on 0x281, 0x381 and 0x481
 
    .. method:: _start(self)
 
@@ -57,12 +55,21 @@ Classes
 
    .. method:: _gen_loop(self)
 
-      generates all the can frames and adds them to queue
+      Loop called in thread to create frames
+
+      call :py:func:`self.thread_active.clear` to end
 
 
    .. method:: _gen_frame(self)
 
+      creates a frame for current id and adds to queue
 
+
+
+.. data:: logger
+   
+
+   
 
 .. data:: v
    

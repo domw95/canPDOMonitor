@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to canPDOMonitor’s documentation! &mdash; canPDOMonitor  documentation</title>
+  <title>canPDOMonitor &mdash; canPDOMonitor  documentation</title>
   
 
   
@@ -83,7 +83,23 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/canPDOMonitor/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/canPDOMonitor/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/_example_virtual/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor._example_virtual</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/can/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.can</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/data/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/kvaser/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.kvaser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/logger/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/manager/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.manager</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/pdo/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.pdo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/virtual/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.virtual</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
             
@@ -130,7 +146,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Welcome to canPDOMonitor’s documentation!</li>
+      <li>canPDOMonitor</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -149,100 +165,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-pdo">
-<span id="welcome-to-canpdomonitor-s-documentation"></span><h1>Welcome to canPDOMonitor’s documentation!<a class="headerlink" href="#module-pdo" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
-<dt id="pdo.Format">
-<em class="property">class </em><code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">Format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.Format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contains all PDO format info for the incoming messages</p>
-<p>Init an instance and use add function to add a FrameFormat with id
-the order in which the frames are added determines expected order
-of frames on the bus</p>
-</dd></dl>
-
-<dl class="py class">
-<dt id="pdo.FrameFormat">
-<em class="property">class </em><code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">FrameFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use7Q8</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">[1, 1, 1, 1]</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">[0, 0, 0, 0]</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.FrameFormat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specifies the format of a PDO frame</p>
-<p>Used in conjunction with Format which holds all details of incoming PDO
-frames and the order which they are expected</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="pdo.FrameOrderError">
-<em class="property">exception </em><code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">FrameOrderError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.FrameOrderError" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py class">
-<dt id="pdo.PDOConverter">
-<em class="property">class </em><code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">PDOConverter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">format</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.PDOConverter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pulls can frames from can.Device, converts them into data</p>
-<p>Requires an active can.Device and Format instance to take raw frames
-and convert them into data</p>
-<dl class="py method">
-<dt id="pdo.PDOConverter.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pdo.PDOConverter.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Starts the CAN hardware device and a thread to read the frames</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pdo.PDOConverter.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pdo.PDOConverter.stop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stops the underlying can Device and the read thread</p>
-<p>Current implmentation will read at most 1 or 2 more can frames from
-queue before stopping</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt id="pdo.ThreadCloseError">
-<em class="property">exception </em><code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">ThreadCloseError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.ThreadCloseError" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="pdo.f7Q8_2_num">
-<code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">f7Q8_2_num</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">byte_arr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.f7Q8_2_num" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts the given LSB 2 byte array to a number using 7Q8 format</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pdo.num_2_f7Q8">
-<code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">num_2_f7Q8</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.num_2_f7Q8" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns a 2 byte array (LSB) of the given number in 7Q8 format</p>
-<p>If the value of num is less than -128 or greater than 127.99,
-the value will be saturated</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pdo.num_2_single">
-<code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">num_2_single</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.num_2_single" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts the given number to 4 byte array (LSB) in single format</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pdo.single_2_num">
-<code class="sig-prename descclassname">pdo.</code><code class="sig-name descname">single_2_num</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">byte_arr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdo.single_2_num" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts the LSB 4 byte array to a single float number</p>
-</dd></dl>
-
+  <div class="section" id="canpdomonitor">
+<h1>canPDOMonitor<a class="headerlink" href="#canpdomonitor" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/canPDOMonitor/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/canPDOMonitor/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/canPDOMonitor/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/_example_virtual/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor._example_virtual</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/can/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.can</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/data/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/kvaser/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.kvaser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/logger/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/manager/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.manager</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/pdo/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.pdo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/canPDOMonitor/virtual/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">canPDOMonitor.virtual</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
 </div>
 
 

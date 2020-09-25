@@ -2,25 +2,25 @@
 
 import threading
 import time
-import can
-import pdo
+from . import can
+from . import pdo
 import math
 import random
 import logging
-
-# set up a logger for this module
-logger = logging.getLogger(__name__)
 
 
 class Virtual(can.Device):
     """
     Virtual device class that sends all sorts of data in PDO frames
 
-    inherits from :class:`can.Device`
+    inherits from :class:`can.Device`.
+
+    Streams data at 1kHz, single float on 0x181
+    and 7Q8 on 0x281, 0x381 and 0x481
 
     """
 
-    def __init__(self, n_pdo=4):
+    def __init__(self):
 
         # super init with bitrate that doesnt matter
         super().__init__(bitrate="1M")
@@ -58,7 +58,9 @@ class Virtual(can.Device):
 
     def _gen_loop(self):
         """
-        generates all the can frames and adds them to queue
+        Loop called in thread to create frames
+
+        call :py:func:`self.thread_active.clear` to end
         """
         print("Starting frame generation loop")
         while(self.thread_active.is_set()):
@@ -75,6 +77,9 @@ class Virtual(can.Device):
                 self._gen_frame()
 
     def _gen_frame(self):
+        """
+        creates a frame for current id and adds to queue
+        """
 
         frame = can.Frame(id=self.order[self.order_ind],
                           timestamp=time.time() - self.start_time)
@@ -100,6 +105,9 @@ class Virtual(can.Device):
             self.data_count = self.data_count + 1
         self.frame_count = self.frame_count + 1
 
+
+# set up a logger for this module
+logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     print("Starting Virtual Can Device")
