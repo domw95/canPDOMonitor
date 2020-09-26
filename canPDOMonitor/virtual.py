@@ -2,8 +2,7 @@
 
 import threading
 import time
-from canPDOMonitor import can
-from canPDOMonitor import pdo
+import canPDOMonitor.can as can
 import math
 import random
 import logging
@@ -85,11 +84,11 @@ class Virtual(can.Device):
                           timestamp=time.time() - self.start_time)
         if frame.id == 0x181:
             value = math.sin(2*math.pi*1*self.data_count/1000)
-            frame.data[0:4] = pdo.num_2_single(value)
-            frame.data[4:8] = pdo.num_2_single(random.gauss(0, 1))
+            frame.data[0:4] = can.num_2_single(value)
+            frame.data[4:8] = can.num_2_single(random.gauss(0, 1))
 
         elif frame.id == 0x281:
-            frame.data[0:2] = pdo.num_2_f7Q8(1)
+            frame.data[0:2] = can.num_2_f7Q8(1)
             pass
         elif frame.id == 0x381:
             pass
@@ -106,24 +105,5 @@ class Virtual(can.Device):
         self._frame_count = self._frame_count + 1
 
 
-def _test():
-    """
-    Creates a virtual can Device and generates 100 frames
-    """
-    logging.basicConfig(level=logging.INFO)
-    logger.info("Running Virtual CAN Device test")
-    v = Virtual()
-    v.start()
-    for i in range(400000):
-        f = v.get_frame()
-        logger.debug("id: {},time: {:.3f}, data:{}".format(f.id,
-                                                           f.timestamp,
-                                                           f.data))
-    v.stop()
-
-
 # set up a logger for this module
 logger = logging.getLogger(__name__)
-
-if __name__ == "__main__":
-    _test()
