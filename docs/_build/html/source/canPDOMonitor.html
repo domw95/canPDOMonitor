@@ -180,8 +180,13 @@
 <p>Specific hardware devices inherit from this.
 classes must implement _start and _stop methods
 CAN frames must be read from devices and placed into frame_queue async
-and thread safe following call to _start method
-:param bitrate: CAN Bus bitrate in b/s</p>
+and thread safe following call to _start method.</p>
+<p>init should call parent constructor with bitrate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bitrate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Int</span></code>) – CAN Bus bitrate in b/s</p>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt id="canPDOMonitor.can.Device.DEFAULT_QUEUE_SIZE">
 <code class="sig-name descname">DEFAULT_QUEUE_SIZE</code><em class="property"> = 4000</em><a class="headerlink" href="#canPDOMonitor.can.Device.DEFAULT_QUEUE_SIZE" title="Permalink to this definition">¶</a></dt>
@@ -200,12 +205,9 @@ and thread safe following call to _start method
 <code class="sig-name descname">get_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Device.get_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the next frame from the queue, blocking execution</p>
 <p>Should be regularly called by whatever process is reciveing the frames
-returns None when can device has been stopped</p>
-<dl class="simple">
-<dt>frame<span class="classifier">Frame</span></dt><dd><p>The next CAN frame from the fifo queue
-None is passed to queue when stopped called</p>
-</dd>
-</dl>
+returns None when can device has been stopped
+:return: Next frame from queue
+:rtype: <code class="xref py py-class docutils literal notranslate"><span class="pre">can.Frame</span></code></p>
 </dd></dl>
 
 <dl class="py method">
@@ -214,7 +216,6 @@ None is passed to queue when stopped called</p>
 <dd><p>To be called externally, calls _start method of class</p>
 <p>Clears the frame queue
 then calls the device-specific _start method</p>
-<p>None.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -223,7 +224,6 @@ then calls the device-specific _start method</p>
 <dd><p>To be called externally, calls _stop method of class</p>
 <p>Calls the device specific _stop method
 Doesn’t clear queue in case messages still need processing</p>
-<p>None.</p>
 </dd></dl>
 
 </dd></dl>
