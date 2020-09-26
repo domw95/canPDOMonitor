@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>canPDOMonitor &mdash; canPDOMonitor 0.0.1 documentation</title>
+  <title>canPDOMonitor.virtual module &mdash; canPDOMonitor 0.0.1 documentation</title>
   
 
   
@@ -36,8 +36,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="can module" href="can.html" />
-    <link rel="prev" title="Welcome to canPDOMonitor’s documentation!" href="../index.html" /> 
+    <link rel="prev" title="canPDOMonitor.kvaser module" href="canPDOMonitor.kvaser.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,11 +83,17 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">canPDOMonitor</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="can.html">can module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datalog.html">datalog module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kvaser.html">kvaser module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="virtual.html">virtual module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">canPDOMonitor</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="canPDOMonitor.html">canPDOMonitor namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="canPDOMonitor.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="canPDOMonitor.can.html">canPDOMonitor.can module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="canPDOMonitor.datalog.html">canPDOMonitor.datalog module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="canPDOMonitor.kvaser.html">canPDOMonitor.kvaser module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">canPDOMonitor.virtual module</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -137,13 +142,17 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>canPDOMonitor</li>
+          <li><a href="modules.html">canPDOMonitor</a> &raquo;</li>
+        
+          <li><a href="canPDOMonitor.html">canPDOMonitor namespace</a> &raquo;</li>
+        
+      <li>canPDOMonitor.virtual module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/source/modules.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/source/canPDOMonitor.virtual.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -156,16 +165,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="canpdomonitor">
-<h1>canPDOMonitor<a class="headerlink" href="#canpdomonitor" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="can.html">can module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datalog.html">datalog module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kvaser.html">kvaser module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="virtual.html">virtual module</a></li>
-</ul>
-</div>
+  <div class="section" id="module-canPDOMonitor.virtual">
+<span id="canpdomonitor-virtual-module"></span><h1>canPDOMonitor.virtual module<a class="headerlink" href="#module-canPDOMonitor.virtual" title="Permalink to this headline">¶</a></h1>
+<p>Virtual can.Device for testing programs.</p>
+<dl class="py class">
+<dt id="canPDOMonitor.virtual.Virtual">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.virtual.</code><code class="sig-name descname">Virtual</code><a class="headerlink" href="#canPDOMonitor.virtual.Virtual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="canPDOMonitor.can.html#canPDOMonitor.can.Device" title="canPDOMonitor.can.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">canPDOMonitor.can.Device</span></code></a></p>
+<p>Virtual device class that sends all sorts of data in PDO frames</p>
+<p>inherits from <code class="xref py py-class docutils literal notranslate"><span class="pre">can.Device</span></code>.</p>
+<p>Streams data at 1kHz, single float on 0x181
+and 7Q8 on 0x281, 0x381 and 0x481</p>
+</dd></dl>
+
 </div>
 
 
@@ -176,10 +188,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="can.html" class="btn btn-neutral float-right" title="can module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to canPDOMonitor’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="canPDOMonitor.kvaser.html" class="btn btn-neutral float-left" title="canPDOMonitor.kvaser module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

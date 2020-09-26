@@ -35,7 +35,8 @@
 
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="kvaser module" href="kvaser.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -80,11 +81,17 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">virtual module</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">canPDOMonitor</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="can.html">can module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datalog.html">datalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kvaser.html">kvaser module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">virtual module</a></li>
 </ul>
-</div>
+</li>
+</ul>
+
             
           
         </div>
@@ -129,6 +136,8 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
+          <li><a href="modules.html">canPDOMonitor</a> &raquo;</li>
+        
       <li>virtual module</li>
     
     
@@ -148,8 +157,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="virtual-module">
-<h1>virtual module<a class="headerlink" href="#virtual-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-virtual">
+<span id="virtual-module"></span><h1>virtual module<a class="headerlink" href="#module-virtual" title="Permalink to this headline">¶</a></h1>
+<p>Virtual can.Device for testing programs.</p>
+<dl class="py class">
+<dt id="virtual.Virtual">
+<em class="property">class </em><code class="sig-prename descclassname">virtual.</code><code class="sig-name descname">Virtual</code><a class="headerlink" href="#virtual.Virtual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">canPDOMonitor.can.Device</span></code></p>
+<p>Virtual device class that sends all sorts of data in PDO frames</p>
+<p>inherits from <a class="reference internal" href="can.html#can.Device" title="can.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">can.Device</span></code></a>.</p>
+<p>Streams data at 1kHz, single float on 0x181
+and 7Q8 on 0x281, 0x381 and 0x481</p>
+</dd></dl>
+
 </div>
 
 
@@ -157,6 +177,13 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="kvaser.html" class="btn btn-neutral float-left" title="kvaser module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

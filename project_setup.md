@@ -15,3 +15,7 @@ install kvaser canlib for kvaser hardware
 Add a setup.py in root folder
 
 pip install -e . (from root)
+
+# To refresh sphinx apidoc
+sphinx-apidoc -o source ../canPDOMonitor/ -e -f
+
