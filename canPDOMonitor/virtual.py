@@ -1,3 +1,4 @@
+  
 """Virtual can.Device for testing programs."""
 
 import threading
@@ -11,9 +12,7 @@ import logging
 class Virtual(can.Device):
     """
     Virtual device class that sends all sorts of data in PDO frames
-
     inherits from :class:`can.Device`.
-
     Streams data at 1kHz, single float on 0x181
     and 7Q8 on 0x281, 0x381 and 0x481
     """
@@ -57,7 +56,6 @@ class Virtual(can.Device):
     def _gen_loop(self):
         """
         Loop called in thread to create frames
-
         call :py:func:`self.thread_active.clear` to end
         """
 
