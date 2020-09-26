@@ -8,6 +8,7 @@ import threading
 import queue
 from abc import ABC, abstractmethod
 from enum import Enum
+import logging
 
 
 class DataLog:
@@ -22,11 +23,23 @@ class DataLog:
     :param end_condition: Indicates when to end logging. If None, will be
         end only when stop is called
     :type end_condition: :class:`Condition`
+    :param start_at_zero: If true, records log from t=0
+    :type start_at_zero:
     """
 
-    def __init__(self, filename, start_condition=None, end_condition=None):
+    def __init__(self, filename, start_condition=None, end_condition=None,
+                 start_at_zero=True):
         # open file used to log data
+        self.filename = filename
         self.file = open(filename, 'w')
+
+        # Start and Stop conditions
+        self.start_condition = start_condition
+        self.end_condition = end_condition
+
+        # offset subtracted time value when writing data
+        self.time_offset = 0
+        self.start_at_zero = start_at_zero
 
         # queue of lists of datapoints to write to file
         self.data_queue = queue.Queue()
@@ -49,19 +62,23 @@ class DataLog:
 
         Starts running the write to file thread, which will place
         data in file or wait until trigger to do so
-
-        Returns
-        -------
-        None.
-
         """
 
         # start the thead to write the datpoints to file
         self.write_thread.start()
 
-    def stop(self):
+    def stop(self, flush=False):
+        """
+        Stop logging data, flush = false could lose some data in queue
+        """
+
+        # pop None on queue so write thread will stop
         self.data_queue.put(None)
-        self.active.clear()
+
+        # if not allowing all data to pass through, tell thread to end
+        if not flush:
+            self.active.clear()
+
         if self.write_thread.is_alive():
             self.write_thread.join()
 
@@ -70,16 +87,6 @@ class DataLog:
         External function for placing lists of datapoints on queue
 
         Will put datapoints on queue if the logger is active
-
-        Parameters
-        ----------
-        datapoints : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-
         """
         if self.active.is_set():
             self.data_queue.put(datapoints)
@@ -97,8 +104,13 @@ class DataLog:
 
             # check if writing to file has begun
             if not self.writing.is_set():
-                # need to write header to file
+                # check start condition
+                if self.start_condition is not None:
+                    # if False, go to next datapoint list in loop
+                    if not self.start_condition.check(datapoints):
+                        continue
 
+                # start condition met, =need to write header to file
                 # create header with time and all signal names
                 self.header.append("time")
                 for datapoint in datapoints:
@@ -113,16 +125,24 @@ class DataLog:
                 self.file.write(self.header[0])
                 for h in self.header[1:]:
                     self.file.write("," + h)
-                self.file.write("\n")
-                print(self.header)
+
+                # record time_offset if neccessary
+                if self.start_at_zero:
+                    self.time_offset = datapoints[0].time
 
             # write all the datapoints from list
-            self.file.write(str(datapoints[0].time))
+            self.file.write("\n")
+            self.file.write("{:.4f}".format(
+                datapoints[0].time - self.time_offset))
             for d in datapoints:
                 self.file.write("," + str(d.value))
                 if d.raw_value is not None:
                     self.file.write("," + str(d.raw_value))
-            self.file.write("\n")
+
+            # check for end condition, and exit loop if true
+            if self.end_condition is not None:
+                if self.end_condition.check(datapoints):
+                    break
 
         self.active.clear()
         self.file.close()
@@ -165,7 +185,7 @@ class TriggerCondition(Condition):
         self.edge = edge
         self.signal_name = signal_name
         self.value = value
-        self.prev_data = None
+        self.prev_datapoint = None
 
     def check(self, datapoints):
         """
@@ -213,19 +233,43 @@ class CountCondition(Condition):
     """
 
     def __init__(self, count):
-        pass
+        self.count = count
+        self.data_count = 0
 
     def check(self, datapoints):
-        pass
+        """
+        Adds 1 to the data count and returns true if it equals count condition
+        """
+
+        self.data_count = self.data_count + 1
+        if self.data_count == self.count:
+            return True
+        else:
+            return False
 
 
 class TimeCondition(Condition):
+    """
+    Check returns true after datapoint time has passed
+    """
 
     def __init__(self, time):
-        pass
+        self.time = time
+        self.start_time = None
 
     def check(self, datapoints):
-        pass
+        """
+        Checks elasped data time between start and now
+        """
+        # check if this is the first check
+        if self.start_time is None:
+            self.start_time = datapoints[0].time
+
+        # check elapsed_time
+        if (datapoints[0].time - self.start_time) >= self.time:
+            return True
+        else:
+            return False
 
 
 class Edge(Enum):
@@ -234,16 +278,29 @@ class Edge(Enum):
     Either = 3
 
 
+# module logger
+logger = logging.getLogger(__name__)
+
 if __name__ == "__main__":
 
-    from kvaser import Kvaser
-    from pdo import PDOConverter, FrameFormat, Format
+    from .virtual import Virtual
+    from .pdo import PDOConverter, FrameFormat, Format
 
     # set up kvaser device
-    device = Kvaser()
+    device = Virtual()
 
-    # create logger
-    dlog = DataLog("test.txt")
+    # create logger to record one wave cycle
+    start_cond = TriggerCondition(Edge.Rising, "Wave Gen Out")
+    end_cond = TriggerCondition(Edge.Rising, "Wave Gen Out")
+    dlog1 = DataLog("test1.txt", start_cond, end_cond)
+
+    start_cond = TriggerCondition(Edge.Rising, "Wave Gen Out")
+    end_cond = CountCondition(1500)
+    dlog2 = DataLog("test2.txt", start_cond, end_cond)
+
+    start_cond = TriggerCondition(Edge.Rising, "Wave Gen Out")
+    end_cond = TimeCondition(2)
+    dlog3 = DataLog("test3.txt", start_cond, end_cond)
 
     # set up PDO formats
     format = Format()
@@ -256,11 +313,18 @@ if __name__ == "__main__":
     # start PDO converter
     pdo_converter = PDOConverter(device, format)
     pdo_converter.start()
-    dlog.start()
+    dlog1.start()
+    dlog2.start()
+    dlog3.start()
 
+    # fetch a load of datapoints from converter and put them to logger
     while(pdo_converter.data_count < 1000*10):
         datapoints = pdo_converter.data_queue.get()
-        dlog.put(datapoints)
+        dlog1.put(datapoints)
+        dlog2.put(datapoints)
+        dlog3.put(datapoints)
 
     pdo_converter.stop()
-    dlog.stop()
+    dlog1.stop()
+    dlog2.stop()
+    dlog3.stop()
