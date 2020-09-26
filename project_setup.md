@@ -10,4 +10,8 @@ install the required repos
 	sphinx-rtd-theme
 
 install kvaser canlib for kvaser hardware 
-	
+
+# to install package to venv
+Add a setup.py in root folder
+
+pip install -e . (from root)

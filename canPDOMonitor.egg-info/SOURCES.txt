@@ -1,0 +1,6 @@
+README.md
+setup.py
+canPDOMonitor.egg-info/PKG-INFO
+canPDOMonitor.egg-info/SOURCES.txt
+canPDOMonitor.egg-info/dependency_links.txt
+canPDOMonitor.egg-info/top_level.txt
