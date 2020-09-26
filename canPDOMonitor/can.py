@@ -197,6 +197,8 @@ class PDOConverter:
 
     Requires an active :class:`can.Device` and Format instance to take raw
     frames and convert them into data
+    :param device:
+    :type device: :class:`can.Device`
     """
 
     def __init__(self, device, format):
@@ -384,16 +386,6 @@ class PDOConverter:
             self.datapoints.append(datapoint)
 
 
-class FrameOrderError(Exception):
-    def __init__(self, msg):
-        super().__init__(msg)
-
-
-class ThreadCloseError(Exception):
-    def __init__(self, msg):
-        super().__init__(msg)
-
-
 class Format:
     """
     Contains all PDO format info for the incoming messages
@@ -474,6 +466,16 @@ def single_2_num(byte_arr):
     Converts the LSB 4 byte array to a single float number
     """
     return struct.unpack('<f', byte_arr)[0]
+
+
+class FrameOrderError(Exception):
+    def __init__(self, msg):
+        super().__init__(msg)
+
+
+class ThreadCloseError(Exception):
+    def __init__(self, msg):
+        super().__init__(msg)
 
 
 class FrameQueueOverflowError(Exception):
