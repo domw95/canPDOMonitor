@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 24 15:39:29 2020
-
-@author: Research
-"""
 import threading
 import queue
 from abc import ABC, abstractmethod
@@ -28,7 +22,7 @@ class DataLog:
     """
 
     def __init__(self, filename, start_condition=None, end_condition=None,
-                 start_at_zero=True):
+                 start_at_zero=True, mode=None):
         # open file used to log data
         self.filename = filename
         self.file = open(filename, 'w')
@@ -63,7 +57,7 @@ class DataLog:
         Starts running the write to file thread, which will place
         data in file or wait until trigger to do so
         """
-
+        logger.info("{} datalog started".format(self.filename))
         # start the thead to write the datpoints to file
         self.write_thread.start()
 
@@ -120,6 +114,7 @@ class DataLog:
 
                 # indicate that writing to file has begun
                 self.writing.set()
+                logger.info("Writing to {}".format(self.filename))
 
                 # write the header
                 self.file.write(self.header[0])
@@ -166,6 +161,13 @@ class Condition(ABC):
         """
         pass
 
+    @abstractmethod
+    def reset(self):
+        """
+        Resets the Condition
+        """
+        pass
+
 
 class TriggerCondition(Condition):
     """
@@ -181,8 +183,8 @@ class TriggerCondition(Condition):
     :type signal_name: String, optional
     """
 
-    def __init__(self, edge, signal_name=None, value=0):
-        self.edge = edge
+    def __init__(self, trigger, signal_name=None, value=0):
+        self.trigger = trigger
         self.signal_name = signal_name
         self.value = value
         self.prev_datapoint = None
@@ -211,20 +213,28 @@ class TriggerCondition(Condition):
             return False
 
         # Look for a rising edge`
-        if ((self.edge == Edge.Rising or self.edge == Edge.Either)
+        if ((self.trigger == Trigger.Rising or self.trigger == Trigger.Either)
                 and self.prev_datapoint.value < self.value
                 and datapoint.value > self.value):
             self.prev_datapoint = datapoint
             return True
 
         # Look for a falling edge
-        if ((self.edge == Edge.Falling or self.edge == Edge.Either)
+        if ((self.trigger == Trigger.Falling or self.trigger == Trigger.Either)
                 and self.prev_datapoint.value > self.value
                 and datapoint.value < self.value):
             self.prev_datapoint = datapoint
             return True
+
+        # check for an equal condition
+        if self.trigger == Trigger.Equal:
+            if datapoint == self.value:
+                return True
         self.prev_datapoint = datapoint
         return False
+
+    def reset(self):
+        self.prev_datapoint = None
 
 
 class CountCondition(Condition):
@@ -246,6 +256,9 @@ class CountCondition(Condition):
             return True
         else:
             return False
+
+    def reset(self):
+        self.data_count = 0
 
 
 class TimeCondition(Condition):
@@ -271,34 +284,43 @@ class TimeCondition(Condition):
         else:
             return False
 
+    def reset(self):
+        self.start_time = None
 
-class Edge(Enum):
+
+class Trigger(Enum):
     Rising = 1
     Falling = 2
     Either = 3
+    Equal = 4
 
 
-# module logger
-logger = logging.getLogger(__name__)
+class DataLogMode(Enum):
+    Once = 1
+    Count = 2
+    Continuous = 3
 
-if __name__ == "__main__":
 
+def _test():
     from .virtual import Virtual
     from .pdo import PDOConverter, FrameFormat, Format
+
+    logging.basicConfig(level=logging.DEBUG)
+    logger.info("Running Datalog test")
 
     # set up kvaser device
     device = Virtual()
 
     # create logger to record one wave cycle
-    start_cond = TriggerCondition(Edge.Rising, "Wave Gen Out")
-    end_cond = TriggerCondition(Edge.Rising, "Wave Gen Out")
+    start_cond = TriggerCondition(Trigger.Rising, "Wave Gen Out")
+    end_cond = TriggerCondition(Trigger.Rising, "Wave Gen Out")
     dlog1 = DataLog("test1.txt", start_cond, end_cond)
 
-    start_cond = TriggerCondition(Edge.Rising, "Wave Gen Out")
+    start_cond = TriggerCondition(Trigger.Falling, "Wave Gen Out")
     end_cond = CountCondition(1500)
     dlog2 = DataLog("test2.txt", start_cond, end_cond)
 
-    start_cond = TriggerCondition(Edge.Rising, "Wave Gen Out")
+    start_cond = TriggerCondition(Trigger.Rising, "Wave Gen Out")
     end_cond = TimeCondition(2)
     dlog3 = DataLog("test3.txt", start_cond, end_cond)
 
@@ -328,3 +350,10 @@ if __name__ == "__main__":
     dlog1.stop()
     dlog2.stop()
     dlog3.stop()
+
+
+# module logger
+logger = logging.getLogger(__name__)
+
+if __name__ == "__main__":
+    _test()
