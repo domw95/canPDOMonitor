@@ -20,18 +20,18 @@ canPDOMonitor.data module
    :undoc-members:
    :show-inheritance:
 
-canPDOMonitor.kvaser module
----------------------------
+canPDOMonitor.datalog module
+----------------------------
 
-.. automodule:: canPDOMonitor.kvaser
+.. automodule:: canPDOMonitor.datalog
    :members:
    :undoc-members:
    :show-inheritance:
 
-canPDOMonitor.logger module
+canPDOMonitor.kvaser module
 ---------------------------
 
-.. automodule:: canPDOMonitor.logger
+.. automodule:: canPDOMonitor.kvaser
    :members:
    :undoc-members:
    :show-inheritance:

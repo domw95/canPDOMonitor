@@ -88,8 +88,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-canPDOMonitor.can">canPDOMonitor.can module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-canPDOMonitor.data">canPDOMonitor.data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-canPDOMonitor.datalog">canPDOMonitor.datalog module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#canpdomonitor-kvaser-module">canPDOMonitor.kvaser module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-canPDOMonitor.logger">canPDOMonitor.logger module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-canPDOMonitor.manager">canPDOMonitor.manager module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-canPDOMonitor.pdo">canPDOMonitor.pdo module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-canPDOMonitor.virtual">canPDOMonitor.virtual module</a></li>
@@ -178,8 +178,8 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Main class for interfacing with CAN hardware.</p>
 <p>Specific hardware devices inherit from this.
-classes must implement _start and _stop methods
-CAN frames must be read from devices and placed into frame_queue async
+Child classes must implement _start and _stop methods</p>
+<p>CAN frames must be read from devices and placed into frame_queue async
 and thread safe following call to _start method.</p>
 <p>init should call parent constructor with bitrate</p>
 <dl class="field-list simple">
@@ -259,21 +259,57 @@ error = true if frame is error frame</p>
 </dd></dl>
 
 </div>
-<div class="section" id="canpdomonitor-kvaser-module">
-<h2>canPDOMonitor.kvaser module<a class="headerlink" href="#canpdomonitor-kvaser-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-canPDOMonitor.logger">
-<span id="canpdomonitor-logger-module"></span><h2>canPDOMonitor.logger module<a class="headerlink" href="#module-canPDOMonitor.logger" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-canPDOMonitor.datalog">
+<span id="canpdomonitor-datalog-module"></span><h2>canPDOMonitor.datalog module<a class="headerlink" href="#module-canPDOMonitor.datalog" title="Permalink to this headline">¶</a></h2>
 <p>Created on Thu Sep 24 15:39:29 2020</p>
 <p>&#64;author: Research</p>
 <dl class="py class">
-<dt id="canPDOMonitor.logger.DataLog">
-<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.logger.</code><code class="sig-name descname">DataLog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">trigger</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.logger.DataLog" title="Permalink to this definition">¶</a></dt>
+<dt id="canPDOMonitor.datalog.Condition">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.datalog.</code><code class="sig-name descname">Condition</code><a class="headerlink" href="#canPDOMonitor.datalog.Condition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>parent class to start and stop datalogger</p>
+<p>Call check function with datapoint list, returns true if condition check
+passes</p>
+<dl class="py method">
+<dt id="canPDOMonitor.datalog.Condition.check">
+<em class="property">abstract </em><code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.Condition.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if check passes, false otherwise</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="canPDOMonitor.datalog.CountCondition">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.datalog.</code><code class="sig-name descname">CountCondition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.CountCondition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#canPDOMonitor.datalog.Condition" title="canPDOMonitor.datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">canPDOMonitor.datalog.Condition</span></code></a></p>
+<p>Condtion will return true when the number of datapoints reaches count</p>
+<dl class="py method">
+<dt id="canPDOMonitor.datalog.CountCondition.check">
+<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.CountCondition.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if check passes, false otherwise</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="canPDOMonitor.datalog.DataLog">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.datalog.</code><code class="sig-name descname">DataLog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">start_condition</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_condition</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.DataLog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Writes datapoints to file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – Name of file to write to, relative or absolute path</p></li>
+<li><p><strong>start_condition</strong> (<a class="reference internal" href="#canPDOMonitor.datalog.Condition" title="canPDOMonitor.datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Condition</span></code></a>) – Indicates when to start logging. If None, will be
+start straight away</p></li>
+<li><p><strong>end_condition</strong> (<a class="reference internal" href="#canPDOMonitor.datalog.Condition" title="canPDOMonitor.datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Condition</span></code></a>) – Indicates when to end logging. If None, will be
+end only when stop is called</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
-<dt id="canPDOMonitor.logger.DataLog.put">
-<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.logger.DataLog.put" title="Permalink to this definition">¶</a></dt>
+<dt id="canPDOMonitor.datalog.DataLog.put">
+<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.DataLog.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>External function for placing lists of datapoints on queue</p>
 <p>Will put datapoints on queue if the logger is active</p>
 <dl class="simple">
@@ -284,8 +320,8 @@ error = true if frame is error frame</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="canPDOMonitor.logger.DataLog.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.logger.DataLog.start" title="Permalink to this definition">¶</a></dt>
+<dt id="canPDOMonitor.datalog.DataLog.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.DataLog.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts logging data that is fed to it, or waits for trigger</p>
 <p>Starts running the write to file thread, which will place
 data in file or wait until trigger to do so</p>
@@ -293,12 +329,72 @@ data in file or wait until trigger to do so</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="canPDOMonitor.logger.DataLog.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.logger.DataLog.stop" title="Permalink to this definition">¶</a></dt>
+<dt id="canPDOMonitor.datalog.DataLog.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.DataLog.stop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
+<dl class="py class">
+<dt id="canPDOMonitor.datalog.Edge">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.datalog.</code><code class="sig-name descname">Edge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.Edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="canPDOMonitor.datalog.Edge.Either">
+<code class="sig-name descname">Either</code><em class="property"> = 3</em><a class="headerlink" href="#canPDOMonitor.datalog.Edge.Either" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="canPDOMonitor.datalog.Edge.Falling">
+<code class="sig-name descname">Falling</code><em class="property"> = 2</em><a class="headerlink" href="#canPDOMonitor.datalog.Edge.Falling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="canPDOMonitor.datalog.Edge.Rising">
+<code class="sig-name descname">Rising</code><em class="property"> = 1</em><a class="headerlink" href="#canPDOMonitor.datalog.Edge.Rising" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="canPDOMonitor.datalog.TimeCondition">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.datalog.</code><code class="sig-name descname">TimeCondition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.TimeCondition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#canPDOMonitor.datalog.Condition" title="canPDOMonitor.datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">canPDOMonitor.datalog.Condition</span></code></a></p>
+<dl class="py method">
+<dt id="canPDOMonitor.datalog.TimeCondition.check">
+<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.TimeCondition.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if check passes, false otherwise</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="canPDOMonitor.datalog.TriggerCondition">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.datalog.</code><code class="sig-name descname">TriggerCondition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em>, <em class="sig-param"><span class="n">signal_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.TriggerCondition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#canPDOMonitor.datalog.Condition" title="canPDOMonitor.datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">canPDOMonitor.datalog.Condition</span></code></a></p>
+<p>Specifiy a rising, falling, changing edge trigger on 0 or value</p>
+<p>Used to start or end datalogger</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edge</strong> (<a class="reference internal" href="#canPDOMonitor.datalog.Edge" title="canPDOMonitor.datalog.Edge"><code class="xref py py-class docutils literal notranslate"><span class="pre">Edge</span></code></a>) – Rising, Falling, Either</p></li>
+<li><p><strong>value</strong> (<em>Float</em><em>, </em><em>optional</em>) – Value to check edge on, Default is 0</p></li>
+<li><p><strong>signal_name</strong> (<em>String</em><em>, </em><em>optional</em>) – Name of signal to check edge, defaults to first signal</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="canPDOMonitor.datalog.TriggerCondition.check">
+<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.datalog.TriggerCondition.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if check passes, false otherwise</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="canpdomonitor-kvaser-module">
+<h2>canPDOMonitor.kvaser module<a class="headerlink" href="#canpdomonitor-kvaser-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-canPDOMonitor.manager">
 <span id="canpdomonitor-manager-module"></span><h2>canPDOMonitor.manager module<a class="headerlink" href="#module-canPDOMonitor.manager" title="Permalink to this headline">¶</a></h2>
