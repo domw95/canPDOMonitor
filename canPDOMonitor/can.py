@@ -6,16 +6,23 @@ Group of classes for general can stuff
 from abc import ABC, abstractmethod
 import queue
 import threading
+import logging
+import time
 
 
 class Device(ABC):
     """Main class for interfacing with CAN hardware.
 
     Specific hardware devices inherit from this.
-    classes must implement _start and _stop methods
+    Child classes must implement _start and _stop methods
+
     CAN frames must be read from devices and placed into frame_queue async
-    and thread safe following call to _start method
+    and thread safe following call to _start method.
+
+    init should call parent constructor with bitrate
+
     :param bitrate: CAN Bus bitrate in b/s
+    :type bitrate: :class:`Int`
     """
 
     # maximum number of CAN frames to hold in queue
@@ -26,8 +33,21 @@ class Device(ABC):
         self.bitrate = bitrate
         self.frame_queue = queue.Queue(maxsize=self.DEFAULT_QUEUE_SIZE)
 
+        # total number of frames from device
+        self.frame_count = 0
+        # time that first one arrived
+        self.frame_start_time = None
+        # approx rate of frames
+        self.frame_rate = 0
+        # thread for checking device stats
+        self.check_thread = threading.Thread(target=self._check_loop)
+        # time the check was last run
+        self.check_time = None
+        # frame count on last check
+        self.check_frame_count = 0
+
         # active flag true when device running, false when stopped
-        self.active = False
+        self.active = threading.Event()
         # lock for reading/changing active flag
         self.active_lock = threading.Lock()
 
@@ -37,20 +57,19 @@ class Device(ABC):
 
         Clears the frame queue
         then calls the device-specific _start method
-
-
-        Returns
-        -------
-        None.
-
         """
+
+        logger.info("Starting can Device")
         # clear the frame queue and start device
         self.clear_queue()
 
         # acquire lock to ensure active state change isnt interrupted by thread
         with self.active_lock:
             self._start()
-            self.active = True
+            self.active.set()
+
+        # start the checking thread
+        self.check_thread.start()
 
     def stop(self):
         """
@@ -58,19 +77,18 @@ class Device(ABC):
 
         Calls the device specific _stop method
         Doesn't clear queue in case messages still need processing
-
-        Returns
-        -------
-        None.
-
         """
+
+        logger.info("Stopping can Device")
         # add None to queue to indicate to consumer to stop
         self._add_to_queue(None)
 
         # stop the device
         with self.active_lock:
             self._stop()
-            self.active = False
+            self.active.clear()
+            if self.check_thread.is_alive():
+                self.check_thread.join()
 
     def get_frame(self):
         """
@@ -78,12 +96,8 @@ class Device(ABC):
 
         Should be regularly called by whatever process is reciveing the frames
         returns None when can device has been stopped
-
-        Returns
-        -------
-        frame : Frame
-            The next CAN frame from the fifo queue
-            None is passed to queue when stopped called
+        :return: Next frame from queue
+        :rtype: :class:`can.Frame`
 
         """
 
@@ -138,19 +152,42 @@ class Device(ABC):
 
         Method adds frame to queue whilst checking for overflow etc
 
-        Parameters
-        ----------
-        frame : Frame
-            Item of Frame class from CAN device
-
-        Returns
-        -------
-        None.
-
         """
+
+        # if queue is not full, put frame on queue
         if self.frame_queue.full():
             raise FrameQueueOverflowError()
         self.frame_queue.put(frame)
+
+        # record frame stats
+        if self.frame_start_time is None:
+            # this if first frame, record time
+            self.frame_start_time = time.time()
+        self.frame_count = self.frame_count + 1
+
+    def _check_loop(self):
+        """
+        Updates stats on Device, such as frame rate, every second
+        """
+        while(self.active.is_set()):
+            # if this is not the first run
+            if self.check_time is not None:
+                # calc frame rate
+                frame_count = self.frame_count - self.check_frame_count
+                elapsed_time = time.time() - self.check_time
+                self.frame_rate = round(frame_count / elapsed_time)
+                total_frame_rate = round(
+                    self.frame_count / (time.time() - self.frame_start_time))
+
+                logger.debug("Frame Rate: {}, Total Rate {}, Frame Count {}".
+                             format(self.frame_rate,
+                                    total_frame_rate,
+                                    self.frame_count))
+
+            # record this check time and frame count, and wait for next loop
+            self.check_time = time.time()
+            self.check_frame_count = self.frame_count
+            time.sleep(1)
 
 
 class Frame:
@@ -176,3 +213,6 @@ class Frame:
 
 class FrameQueueOverflowError(Exception):
     pass
+
+
+logger = logging.getLogger(__name__)

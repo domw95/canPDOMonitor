@@ -17,7 +17,6 @@ class Virtual(can.Device):
 
     Streams data at 1kHz, single float on 0x181
     and 7Q8 on 0x281, 0x381 and 0x481
-
     """
 
     def __init__(self):
@@ -30,13 +29,13 @@ class Virtual(can.Device):
         self.thread_active = threading.Event()
 
         # how many frames should be sent per second
-        self.frame_rate = 4000
+        self.target_frame_rate = 4000
 
         # how long to sleep for between bursts
         self.sleep_time = 0.01
 
         # how many frames to send in one go, to roughly mimic real device
-        self.nframe_send = round(self.frame_rate * self.sleep_time)
+        self.nframe_send = round(self.target_frame_rate * self.sleep_time)
 
         # order in which to send PDOs
         self.order = [0x181, 0x281, 0x381, 0x481]
@@ -48,7 +47,7 @@ class Virtual(can.Device):
     def _start(self):
         self.start_time = time.time()
 
-        self.frame_count = 0
+        self._frame_count = 0
         self.thread_active.set()
         self.gen_thread.start()
 
@@ -62,12 +61,13 @@ class Virtual(can.Device):
 
         call :py:func:`self.thread_active.clear` to end
         """
+
         logger.info("Frame Generation Started")
         while(self.thread_active.is_set()):
             # check how long its been running and how many frames should
             # have been sent
             elapsed_time = time.time() - self.start_time
-            frame_target = self.frame_rate * elapsed_time
+            frame_target = self.target_frame_rate * elapsed_time
 
             # if sent more than required, go to sleep
             if frame_target < self.frame_count:
@@ -103,22 +103,22 @@ class Virtual(can.Device):
             # have reached end of data
             self.order_ind = 0
             self.data_count = self.data_count + 1
-        self.frame_count = self.frame_count + 1
+        self._frame_count = self._frame_count + 1
+
 
 def _test():
     """
     Creates a virtual can Device and generates 100 frames
     """
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     logger.info("Running Virtual CAN Device test")
     v = Virtual()
-    logger.info("Starting Device")
     v.start()
-    for i in range(10):
+    for i in range(400000):
         f = v.get_frame()
         logger.debug("id: {},time: {:.3f}, data:{}".format(f.id,
-                                                    f.timestamp,
-                                                    f.data))
+                                                           f.timestamp,
+                                                           f.data))
     v.stop()
 
 

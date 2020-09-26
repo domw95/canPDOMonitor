@@ -15,12 +15,14 @@ bitrates = {
     10000: canlib.canBITRATE_10K,
 }
 
+
 class Kvaser(Device):
     """
     Class for communicating with kvaser hardware using the kvaser canlib
 
-    inherits from Device
+    inherits from :class:`can.Device`
     """
+
     def __init__(self, bitrate=1000000, channel=0):
         super().__init__(bitrate)
         # reinit library to clearup any previous connections
@@ -50,7 +52,7 @@ class Kvaser(Device):
 
     def _start(self):
         # stop the device just in case
-        #self._stop()
+        # self._stop()
 
         # clear the buffer
         self.ch.iocontrol.flush_rx_buffer()
@@ -102,8 +104,6 @@ class Kvaser(Device):
 
         # thread ends here, do any clear up as required
 
-
-
     def _read_messages(self):
         """
         Reads all the messages from device and places them in queue
@@ -114,7 +114,7 @@ class Kvaser(Device):
 
         """
         # print("\rQueue size: {}".format(self.ch.iocontrol.rx_buffer_level),
-              # flush=True,end="\r")
+        # flush=True,end="\r")
         while(self.reading.is_set()):
 
             try:
@@ -123,17 +123,20 @@ class Kvaser(Device):
 
                 # If got a frame, convert to custom frame type and place in
                 # queue
-                self._add_to_queue(Frame(id=frame.id,data=frame.data,
-                                   timestamp=frame.timestamp,dlc=frame.dlc))
+                self._add_to_queue(Frame(id=frame.id, data=frame.data,
+                                         timestamp=frame.timestamp,
+                                         dlc=frame.dlc))
                 # print(type(frame.data))
 
             except canlib.CanNoMsg:
                 # no more messages available
                 return
 
+
 class KvaserError(Exception):
-    def __init__(self,msg="Kvaser Error"):
+    def __init__(self, msg="Kvaser Error"):
         super().__init__(msg)
+
 
 if __name__ == "__main__":
     k = Kvaser()
