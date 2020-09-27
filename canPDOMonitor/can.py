@@ -405,15 +405,64 @@ class Format:
     Init an instance and use add function to add a FrameFormat with id
     the order in which the frames are added determines expected order
     of frames on the bus
+
+    :param odr: Path to a tREU object dictionary to extract PDO info
+    :type odr: :class:`String`
     """
 
-    def __init__(self, rate=1000):
+    def __init__(self, odr=None, rate=1000):
         # init list for storing order of frame ids
         self.order = []
         # init dict for storing frameFormats
         self.frame = {}
         # rate of data in Hz
         self.rate = rate
+
+        params = {}
+        # check for object dictionary
+        if odr is not None:
+            # try open the file
+            try:
+                file = open(odr, "r")
+                # go through each line extracting params
+                for line in file:
+                    pair = line.split("=")
+                    params[pair[0].strip()] = pair[1].strip()
+                file.close()
+            # catch file not found error
+            except FileNotFoundError:
+                return
+        else:
+            return
+
+        # go through the params
+        # check for data rate
+        if "CAN Sys PDO Tx Divider" in params:
+            self.rate = 10000/float(
+                params["CAN Sys PDO Tx Divider"])
+
+        # go through each of the PDOs
+        for i in range(1, 5):
+            # transtype must be 255 for PDO Tx
+            transtype = "CAN Sys PDO{} Tx TransType".format(i)
+            if transtype in params:
+                if params[transtype] == "255":
+                    # PDO<i> enabled, create format with correct id
+                    frame_format = FrameFormat(i*0x100 + 0x81)
+                    # check for 7Q8
+                    if params["CAN Sys PDO{} Use7q8Format".format(i)] == "0":
+                        frame_format.use7Q8 = False
+                        n_values = 2
+                    else:
+                        frame_format.use7Q8 = True
+                        n_values = 4
+
+                    # get all the signal names
+                    for j in range(n_values):
+                        frame_format.name[j] = (
+                            params["CAN Sys PDO{} Tx Ptr{}".format(i, j+1)]
+                        )
+                    self.add(frame_format)
 
     def add(self, frame_format):
         # add tje frame format to the dict
