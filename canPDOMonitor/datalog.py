@@ -110,8 +110,6 @@ class DataLogger:
                 self.header.append("time")
                 for datapoint in datapoints:
                     self.header.append(datapoint.name)
-                    if datapoint.raw_value is not None:
-                        self.header.append(datapoint.name + "_raw")
 
                 # indicate that writing to file has begun
                 self.writing.set()
@@ -132,8 +130,6 @@ class DataLogger:
                 datapoints[0].time - self.time_offset))
             for d in datapoints:
                 self.file.write("," + str(d.value))
-                if d.raw_value is not None:
-                    self.file.write("," + str(d.raw_value))
 
             # check for end condition, and exit loop if true
             if self.end_condition is not None:
@@ -163,7 +159,7 @@ class DataLoggerGroup(DataLogger):
 
 class Datapoint:
     def __init__(self, name=None, value=0, time=0,
-                 timestamp=0, index=0, raw_value=None):
+                 timestamp=0, index=0):
         # signal name: string
         self.name = name
         # value: float
@@ -174,8 +170,6 @@ class Datapoint:
         self.time = time
         # index of datapoint since start
         self.index = index
-        # raw value of signal before offset/gain applied (if not 0/1)
-        self.raw_value = raw_value
 
 
 class Condition(ABC):

@@ -377,17 +377,7 @@ class PDOConverter:
             # create a new datapoint
             datapoint = Datapoint(name=frame_format.name[i])
 
-            # check if gain and offset required and add value
-            offset = frame_format.offset[i]
-            gain = frame_format.gain[i]
-
-            if (offset == 0 and frame_format.gain[i] == 1):
-                # normal signal, pass straight through
-                datapoint.value = value
-            else:
-                # apply gain and offset
-                datapoint.raw_value = value
-                datapoint.value = (value + offset)*gain
+            datapoint.value = value
 
             # add the timestamp and time info
             datapoint.timestamp = frame.timestamp
@@ -494,13 +484,10 @@ class FrameFormat:
     """
 
     def __init__(self, id, active=True, use7Q8=True,
-                 gain=[1, 1, 1, 1],
-                 offset=[0, 0, 0, 0], name=None):
+                 name=None):
         self.id = id
         self.active = active
         self.use7Q8 = use7Q8
-        self.gain = gain
-        self.offset = offset
         if name is None:
             self.name = [str(id) + '_' + str(x) for x in range(4)]
         else:
