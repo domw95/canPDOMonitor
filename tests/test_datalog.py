@@ -1,6 +1,6 @@
 from canPDOMonitor.virtual import Virtual
 from canPDOMonitor.can import PDOConverter, FrameFormat, Format
-from canPDOMonitor.datalog import (TriggerCondition, DataLog, CountCondition,
+from canPDOMonitor.datalog import (TriggerCondition, DataLogger, CountCondition,
                                    TimeCondition, Trigger)
 import logging
 
@@ -14,15 +14,15 @@ device = Virtual()
 # create logger to record one wave cycle
 start_cond = TriggerCondition(Trigger.Rising, "Wave Gen Out")
 end_cond = TriggerCondition(Trigger.Rising, "Wave Gen Out")
-dlog1 = DataLog("test1.txt", start_cond, end_cond)
+dlog1 = DataLogger("test1.txt", start_cond, end_cond)
 
 start_cond = TriggerCondition(Trigger.Falling, "Wave Gen Out")
 end_cond = CountCondition(1500)
-dlog2 = DataLog("test2.txt", start_cond, end_cond)
+dlog2 = DataLogger("test2.txt", start_cond, end_cond)
 
 start_cond = TriggerCondition(Trigger.Rising, "Wave Gen Out")
 end_cond = TimeCondition(2)
-dlog3 = DataLog("test3.txt", start_cond, end_cond)
+dlog3 = DataLogger("test3.txt", start_cond, end_cond)
 
 # set up PDO formats
 format = Format()

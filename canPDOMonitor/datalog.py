@@ -5,7 +5,7 @@ from enum import Enum
 import logging
 
 
-class DataLog:
+class DataLogger:
     """
     Writes datapoints to file
 
