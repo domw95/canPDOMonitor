@@ -5,6 +5,7 @@ Group of classes for CAN and PDO
 
 from abc import ABC, abstractmethod
 from canPDOMonitor.datalog import Datapoint
+from canPDOMonitor.common import params_from_file
 import queue
 import threading
 import logging
@@ -408,22 +409,11 @@ class Format:
         # rate of data in Hz
         self.rate = rate
 
-        params = {}
         # check for object dictionary
         if odr is not None:
-            # try open the file
-            try:
-                file = open(odr, "r")
-                # go through each line extracting params
-                for line in file:
-                    pair = line.split("=")
-                    params[pair[0].strip()] = pair[1].strip()
-                file.close()
-            # catch file not found error
-            except FileNotFoundError:
+            params = params_from_file(odr)
+            if params is None:
                 return
-        else:
-            return
 
         # go through the params
         # check for data rate
