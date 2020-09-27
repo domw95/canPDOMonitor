@@ -226,12 +226,17 @@ Doesn’t clear queue in case messages still need processing</p>
 
 <dl class="py class">
 <dt id="can.Format">
-<em class="property">class </em><code class="sig-prename descclassname">can.</code><code class="sig-name descname">Format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#can.Format" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">can.</code><code class="sig-name descname">Format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">odr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#can.Format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Contains all PDO format info for the incoming messages</p>
 <p>Init an instance and use add function to add a FrameFormat with id
 the order in which the frames are added determines expected order
 of frames on the bus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>odr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – Path to a tREU object dictionary to extract PDO info</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="can.Format.add">
 <code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_format</span></em><span class="sig-paren">)</span><a class="headerlink" href="#can.Format.add" title="Permalink to this definition">¶</a></dt>
@@ -248,7 +253,7 @@ of frames on the bus</p>
 
 <dl class="py class">
 <dt id="can.FrameFormat">
-<em class="property">class </em><code class="sig-prename descclassname">can.</code><code class="sig-name descname">FrameFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use7Q8</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">[1, 1, 1, 1]</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">[0, 0, 0, 0]</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#can.FrameFormat" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">can.</code><code class="sig-name descname">FrameFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use7Q8</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#can.FrameFormat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Specifies the format of a PDO frame</p>
 <p>Used in conjunction with Format which holds all details of incoming PDO

@@ -5,6 +5,7 @@ canPDOMonitor
    :maxdepth: 4
 
    can
+   common
    datalog
    kvaser
    monitor
