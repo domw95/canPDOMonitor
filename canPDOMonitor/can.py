@@ -250,6 +250,11 @@ class PDOConverter:
         Current implmentation will read at most 1 or 2 more can frames from
         queue before stopping
         """
+
+        # Pop None on the queue to indicate to consumer that stop is called
+        self.data_queue.put(None)
+
+        # Call for underlying device to stop and wait for thread to end
         self.device.stop()
         self.read_active.clear()
         if self.read_thread.is_alive():
@@ -257,6 +262,13 @@ class PDOConverter:
             if self.read_thread.is_alive():
                 # error ending thread, do something
                 raise ThreadCloseError("PDO Converter read thread not closing")
+
+    def get_datapoints(self):
+        """
+        Returns the next list of datapoints, None if device has stopped
+        """
+
+        return self.data_queue.get(True)
 
     def _read_loop(self):
         """
@@ -407,6 +419,21 @@ class Format:
         # add tje frame format to the dict
         self.frame[frame_format.id] = frame_format
         self.order.append(frame_format.id)
+
+
+class DefaultFormat(Format):
+    """
+    Creates a :class:`Format` object with some default Frameformats
+    """
+
+    def __init__(self):
+        # init parent Frame class
+        super().__init__()
+        # create the 4 frame classes and add
+        self.add(FrameFormat(0x181, use7Q8=False))
+        self.add(FrameFormat(0x281))
+        self.add(FrameFormat(0x381))
+        self.add(FrameFormat(0x481))
 
 
 class FrameFormat:

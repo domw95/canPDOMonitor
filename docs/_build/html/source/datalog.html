@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="can.html">can module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">datalog module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kvaser.html">kvaser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="virtual.html">virtual module</a></li>
 </ul>
 </li>
@@ -201,46 +202,6 @@ passes</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="datalog.DataLog">
-<em class="property">class </em><code class="sig-prename descclassname">datalog.</code><code class="sig-name descname">DataLog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">start_condition</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_condition</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_at_zero</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Writes datapoints to file</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – Name of file to write to, relative or absolute path</p></li>
-<li><p><strong>start_condition</strong> (<a class="reference internal" href="#datalog.Condition" title="datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Condition</span></code></a>) – Indicates when to start logging. If None, will be
-started straight away</p></li>
-<li><p><strong>end_condition</strong> (<a class="reference internal" href="#datalog.Condition" title="datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Condition</span></code></a>) – Indicates when to end logging. If None, will be
-end only when stop is called</p></li>
-<li><p><strong>start_at_zero</strong> – If true, records log from t=0</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="datalog.DataLog.put">
-<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLog.put" title="Permalink to this definition">¶</a></dt>
-<dd><p>External function for placing lists of datapoints on queue</p>
-<p>Will put datapoints on queue if the logger is active</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="datalog.DataLog.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLog.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Starts logging data that is fed to it, or waits for trigger</p>
-<p>Starts running the write to file thread, which will place
-data in file or wait until trigger to do so</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="datalog.DataLog.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flush</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLog.stop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stop logging data, flush = false could lose some data in queue</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt id="datalog.DataLogMode">
 <em class="property">class </em><code class="sig-prename descclassname">datalog.</code><code class="sig-name descname">DataLogMode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLogMode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
@@ -260,6 +221,58 @@ data in file or wait until trigger to do so</p>
 <code class="sig-name descname">Once</code><em class="property"> = 1</em><a class="headerlink" href="#datalog.DataLogMode.Once" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt id="datalog.DataLogger">
+<em class="property">class </em><code class="sig-prename descclassname">datalog.</code><code class="sig-name descname">DataLogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">start_condition</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_condition</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_at_zero</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Writes datapoints to file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – Name of file to write to, relative or absolute path</p></li>
+<li><p><strong>start_condition</strong> (<a class="reference internal" href="#datalog.Condition" title="datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Condition</span></code></a>) – Indicates when to start logging. If None, will be
+started straight away</p></li>
+<li><p><strong>end_condition</strong> (<a class="reference internal" href="#datalog.Condition" title="datalog.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Condition</span></code></a>) – Indicates when to end logging. If None, will be
+end only when stop is called</p></li>
+<li><p><strong>start_at_zero</strong> – If true, records log from t=0</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="datalog.DataLogger.put">
+<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLogger.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>External function for placing lists of datapoints on queue</p>
+<p>Will put datapoints on queue if the logger is active</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datalog.DataLogger.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLogger.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts logging data that is fed to it, or waits for trigger</p>
+<p>Starts running the write to file thread, which will place
+data in file or wait until trigger to do so</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datalog.DataLogger.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flush</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLogger.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop logging data, flush = false could lose some data in queue</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="datalog.DataLoggerGroup">
+<em class="property">class </em><code class="sig-prename descclassname">datalog.</code><code class="sig-name descname">DataLoggerGroup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#datalog.DataLoggerGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datalog.DataLogger" title="datalog.DataLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">datalog.DataLogger</span></code></a></p>
+<p>Extends functionality of a datalogger to many loggers</p>
+<p>Used for testing, where switching to a new file can be
+automated based on a condition in a signal. Redcued overhead compared
+to have a list of dataloggers, as the datapoints only go where required.
+Also should be easier to setup</p>
+<p>NEEDS IMPLEMENTING</p>
 </dd></dl>
 
 <dl class="py class">

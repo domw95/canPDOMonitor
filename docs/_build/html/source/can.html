@@ -88,6 +88,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">can module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datalog.html">datalog module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kvaser.html">kvaser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="virtual.html">virtual module</a></li>
 </ul>
 </li>
@@ -161,6 +162,13 @@
   <div class="section" id="module-can">
 <span id="can-module"></span><h1>can module<a class="headerlink" href="#module-can" title="Permalink to this headline">¶</a></h1>
 <p>Group of classes for CAN and PDO</p>
+<dl class="py class">
+<dt id="can.DefaultFormat">
+<em class="property">class </em><code class="sig-prename descclassname">can.</code><code class="sig-name descname">DefaultFormat</code><a class="headerlink" href="#can.DefaultFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#can.Format" title="can.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">can.Format</span></code></a></p>
+<p>Creates a <a class="reference internal" href="#can.Format" title="can.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> object with some default Frameformats</p>
+</dd></dl>
+
 <dl class="py class">
 <dt id="can.Device">
 <em class="property">class </em><code class="sig-prename descclassname">can.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bitrate</span></em><span class="sig-paren">)</span><a class="headerlink" href="#can.Device" title="Permalink to this definition">¶</a></dt>
@@ -268,6 +276,12 @@ frames and the order which they are expected</p>
 frames and convert them into data
 :param device:
 :type device: <a class="reference internal" href="#can.Device" title="can.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">can.Device</span></code></a></p>
+<dl class="py method">
+<dt id="can.PDOConverter.get_datapoints">
+<code class="sig-name descname">get_datapoints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#can.PDOConverter.get_datapoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the next list of datapoints, None if device has stopped</p>
+</dd></dl>
+
 <dl class="py method">
 <dt id="can.PDOConverter.start">
 <code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#can.PDOConverter.start" title="Permalink to this definition">¶</a></dt>

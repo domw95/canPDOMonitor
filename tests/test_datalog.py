@@ -1,6 +1,7 @@
 from canPDOMonitor.virtual import Virtual
 from canPDOMonitor.can import PDOConverter, FrameFormat, Format
-from canPDOMonitor.datalog import (TriggerCondition, DataLogger, CountCondition,
+from canPDOMonitor.datalog import (TriggerCondition, DataLogger,
+                                   CountCondition,
                                    TimeCondition, Trigger)
 import logging
 

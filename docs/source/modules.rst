@@ -7,4 +7,5 @@ canPDOMonitor
    can
    datalog
    kvaser
+   monitor
    virtual

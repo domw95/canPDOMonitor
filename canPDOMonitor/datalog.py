@@ -59,6 +59,7 @@ class DataLogger:
         """
         logger.info("{} datalog started".format(self.filename))
         # start the thead to write the datpoints to file
+        self.active.set()
         self.write_thread.start()
 
     def stop(self, flush=False):
@@ -141,6 +142,22 @@ class DataLogger:
 
         self.active.clear()
         self.file.close()
+
+
+class DataLoggerGroup(DataLogger):
+    """
+    Extends functionality of a datalogger to many loggers
+
+    Used for testing, where switching to a new file can be
+    automated based on a condition in a signal. Redcued overhead compared
+    to have a list of dataloggers, as the datapoints only go where required.
+    Also should be easier to setup
+
+    NEEDS IMPLEMENTING
+    """
+
+    def __init__(self, filename):
+        pass
 
 
 class Datapoint:
