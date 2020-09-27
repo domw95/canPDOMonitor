@@ -142,7 +142,7 @@ class Monitor:
                     dl_active = True
 
             if not dl_active:
-                logging.info("No more active dataloggers")
+                logger.info("No more active dataloggers")
                 # no more dataloggers are running, stop monitor
                 self.stop()
                 return

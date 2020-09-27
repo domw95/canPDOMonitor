@@ -142,6 +142,7 @@ class DataLogger:
 
         self.active.clear()
         self.file.close()
+        logger.info("Writing to {} ended".format(self.filename))
 
 
 class DataLoggerGroup(DataLogger):
