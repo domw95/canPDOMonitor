@@ -21,7 +21,7 @@ class Monitor:
     blank.  Format will then include the PDO specifications from the
     CAN_SYS_PDO.odr file in the current directory
 
-    :param device: Defaults to :class:'virtual.Virtual`, with its defaults
+    :param device: Defaults to :class:`virtual.Virtual`, with its defaults
     :type device: :class:`can.Device`
     :param format: Defaults to object dict in local directory, then class
         default for :class:`can.Format`

@@ -1,6 +1,5 @@
 from canPDOMonitor.monitor import Monitor
 from canPDOMonitor.datalog import DataLogger, TimeCondition
-import time
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,9 +14,5 @@ monitor.add_datalogger(DataLogger("montest1.txt",
 monitor.add_datalogger(DataLogger("montest2.txt",
                                   end_condition=TimeCondition(2)))
 
-# start the monitor
+# start the monitor, which ends automagically
 monitor.start()
-
-# with logger end conditions, monitor should stop automatically
-# while(monitor.active.is_set()):
-#     time.sleep(1)
