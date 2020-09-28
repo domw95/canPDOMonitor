@@ -183,10 +183,13 @@ class Frame:
     Class to hold frame information
     """
 
-    def __init__(self, id=0,
+    def __init__(self, id=0, data=None,
                  timestamp=0, dlc=8, error=False):
         self.id = id
-        self.data = bytearray((0, 0, 0, 0, 0, 0, 0, 0))
+        if data is None:
+            self.data = bytearray((0, 0, 0, 0, 0, 0, 0, 0))
+        else:
+            self.data = data
         self.timestamp = timestamp
         self.dlc = dlc
         self.error = error
