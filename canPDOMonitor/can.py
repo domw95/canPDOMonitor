@@ -433,7 +433,7 @@ class Format:
                     # PDO<i> enabled, create format with correct id
                     frame_format = FrameFormat(i*0x100 + 0x81)
                     # check for 7Q8
-                    if params["CAN Sys PDO{} Use7q8Format".format(i)] == "0":
+                    if params["CAN Sys Use7q8Format PDO{}".format(i)] == "0":
                         frame_format.use7Q8 = False
                         n_values = 2
                     else:

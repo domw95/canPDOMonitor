@@ -4,7 +4,7 @@ create a virtual env venv inside (python -m venv venv)
 
 activate venv (source bin/activate / Scripts/activate)
 
-install the required repos
+install the required repos (pip install)
 	canlib
 	sphinx
 	sphinx-rtd-theme
