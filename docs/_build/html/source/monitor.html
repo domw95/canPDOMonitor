@@ -86,6 +86,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">canPDOMonitor</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="can.html">can module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common.html">common module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datalog.html">datalog module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kvaser.html">kvaser module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">monitor module</a></li>
@@ -165,6 +166,46 @@
 <p>Monitor routes datapoints from a pdo_converter to attached dataloggers,
 managing the stopping and starting of each.  Can use a CAN_SYS_PDO.order
 object dictionary to choose PDO format</p>
+<dl class="py class">
+<dt id="monitor.Calibrate">
+<em class="property">class </em><code class="sig-prename descclassname">monitor.</code><code class="sig-name descname">Calibrate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">new_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keep</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Calibrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#monitor.FilterType" title="monitor.FilterType"><code class="xref py py-class docutils literal notranslate"><span class="pre">monitor.FilterType</span></code></a></p>
+<p>”
+Defines an offset and gain to be applied to the named signal</p>
+<p>Create a new signal by giving a new_name, keep the old one as well
+by setting keep to True</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – Name of signal to act on</p></li>
+<li><p><strong>offset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>) – Offset applied to signal before gain</p></li>
+<li><p><strong>gain</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>) – Gain applied to signal after offset</p></li>
+<li><p><strong>new_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – Name of new signal. If None, signal value replaced</p></li>
+<li><p><strong>keep</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Bool</span></code>) – If True, creates a new signal with name new_name</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="monitor.Calibrate.process">
+<code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Calibrate.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="monitor.FilterType">
+<em class="property">class </em><code class="sig-prename descclassname">monitor.</code><code class="sig-name descname">FilterType</code><a class="headerlink" href="#monitor.FilterType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for Filter</p>
+<p>Child classes must implement the process method that acts on a list of
+datapoints, can change values, add more etc</p>
+<dl class="py method">
+<dt id="monitor.FilterType.process">
+<em class="property">abstract </em><code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.FilterType.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py exception">
 <dt id="monitor.InvalidArgumentsError">
 <em class="property">exception </em><code class="sig-prename descclassname">monitor.</code><code class="sig-name descname">InvalidArgumentsError</code><a class="headerlink" href="#monitor.InvalidArgumentsError" title="Permalink to this definition">¶</a></dt>
@@ -197,6 +238,18 @@ given in the constructor</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>datalogger</strong> (<a class="reference internal" href="datalog.html#datalog.DataLogger" title="datalog.DataLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">datalog.DataLogger</span></code></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="monitor.Monitor.add_filter">
+<code class="sig-name descname">add_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Monitor.add_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add filter to be applied in between the pdo converter and logger/graphs</p>
+<p>filter is one the classes deriving from <a class="reference internal" href="#monitor.FilterType" title="monitor.FilterType"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterType</span></code></a> base class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filter</strong> (<a class="reference internal" href="#monitor.FilterType" title="monitor.FilterType"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterType</span></code></a>) – A filter to be applied the datapoints</p>
 </dd>
 </dl>
 </dd></dl>

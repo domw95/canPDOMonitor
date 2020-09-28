@@ -8,6 +8,8 @@ object dictionary to choose PDO format
 
 from canPDOMonitor.can import PDOConverter, DefaultFormat
 from canPDOMonitor.virtual import Virtual
+from canPDOMonitor.datalog import Datapoint
+from abc import ABC, abstractmethod
 import threading
 import time
 import logging
@@ -53,6 +55,8 @@ class Monitor:
         if pdo_converter is None:
             self.pdo_converter = PDOConverter(self.device, self.format)
 
+        # list of filters
+        self.filters = []
         # List of dataloggers
         self.dataloggers = []
 
@@ -73,6 +77,17 @@ class Monitor:
         :type datalogger: :class:`datalog.DataLogger`
         """
         self.dataloggers.append(datalogger)
+
+    def add_filter(self, filter):
+        """
+        Add filter to be applied in between the pdo converter and logger/graphs
+
+        filter is one the classes deriving from :class:`FilterType` base class
+
+        :param filter: A filter to be applied the datapoints
+        :type filter: :class:`FilterType`
+        """
+        self.filters.append(filter)
 
     def start(self):
         """
@@ -129,6 +144,10 @@ class Monitor:
                 # pdo converter has stopped
                 break
 
+            # pass the datapoints through filters
+            for filter in self.filters:
+                filter.process(datapoints)
+
             # pass all the datapoints to the dataloggers
             for datalogger in self.dataloggers:
                 datalogger.put(datapoints)
@@ -148,6 +167,73 @@ class Monitor:
                 return
 
             time.sleep(2)
+
+
+class FilterType(ABC):
+    """
+    Base class for Filter
+
+    Child classes must implement the process method that acts on a list of
+    datapoints, can change values, add more etc
+    """
+
+    @abstractmethod
+    def process(self, datapoints):
+        pass
+
+
+class Calibrate(FilterType):
+    """"
+    Defines an offset and gain to be applied to the named signal
+
+    Create a new signal by giving a new_name, keep the old one as well
+    by setting keep to True
+
+    :param name: Name of signal to act on
+    :type name: :class:`String`
+    :param offset: Offset applied to signal before gain
+    :type offset: :class:`Float`
+    :param gain: Gain applied to signal after offset
+    :type gain: :class:`Float`
+    :param new_name: Name of new signal. If None, signal value replaced
+    :type new_name: :class:`String`
+    :param keep: If True, creates a new signal with name new_name
+    :type keep: :class:`Bool`
+    """
+
+    def __init__(self, name, offset=0, gain=1, new_name=None, keep=False):
+        self.name = name
+        self.offset = offset
+        self.gain = gain
+        self.new_name = new_name
+        self.keep = keep
+
+    def process(self, datapoints):
+        # find the signal name
+        for datapoint in datapoints:
+            if datapoint.name == self.name:
+                # calc new value
+                value = (datapoint.value + self.offset) * self.gain
+                # change in place if no new name
+                if self.new_name is None:
+                    datapoint.value = value
+                else:
+                    # if not keeping old, change in place
+                    if not self.keep:
+                        datapoint.value = value
+                        datapoint.name = self.new_name
+                    else:
+                        # create a new datapoint and add to list
+                        new_datapoint = Datapoint(
+                            name=self.new_name,
+                            value=value,
+                            time=datapoint.time,
+                            timestamp=datapoint.timestamp,
+                            index=datapoint.index,
+                        )
+                        datapoints.append(new_datapoint)
+                # Found datapoint, break from loop
+                break
 
 
 class InvalidArgumentsError(Exception):

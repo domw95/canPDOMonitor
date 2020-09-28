@@ -8,7 +8,8 @@ def params_from_file(filename):
     param2 = value2\n
 
     With or without spaces around the equals. Leading and trailing characters
-    are removed.  Value is stored as a string
+    are removed.  Value is stored as a string. Any repeated keys will have a
+    number appended to them
 
     :param filename: Path of file to open
     :type filename: :class:`String`
@@ -21,9 +22,12 @@ def params_from_file(filename):
         # go through each line extracting params
         for line in file:
             pair = line.split("=")
-            params[pair[0].strip()] = pair[1].strip()
+            key = pair[0].strip()
+            value = pair[1].strip()
+            params[key] = value
         file.close()
     # catch file not found error
     except FileNotFoundError:
         return None
+    # return params
     return params
