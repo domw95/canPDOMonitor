@@ -210,13 +210,17 @@ class TriggerCondition(Condition):
     :type value: Float, optional
     :param signal_name: Name of signal to check edge, defaults to first signal
     :type signal_name: String, optional
+    :param count: Will return true when trigger activates count times
+    :type count: :class:`Int`
     """
 
-    def __init__(self, trigger, signal_name=None, value=0):
+    def __init__(self, trigger, signal_name=None, value=0, count=1):
         self.trigger = trigger
         self.signal_name = signal_name
         self.value = value
         self.prev_datapoint = None
+        self.count = count
+        self.trig_count = 0
 
     def check(self, datapoints):
         """
@@ -244,26 +248,32 @@ class TriggerCondition(Condition):
         # Look for a rising edge`
         if ((self.trigger == Trigger.Rising or self.trigger == Trigger.Either)
                 and self.prev_datapoint.value < self.value
-                and datapoint.value > self.value):
-            self.prev_datapoint = datapoint
-            return True
+                and datapoint.value >= self.value):
+            self.trig_count = self.trig_count + 1
 
         # Look for a falling edge
-        if ((self.trigger == Trigger.Falling or self.trigger == Trigger.Either)
+        elif ((self.trigger == Trigger.Falling
+                or self.trigger == Trigger.Either)
                 and self.prev_datapoint.value > self.value
-                and datapoint.value < self.value):
-            self.prev_datapoint = datapoint
-            return True
+                and datapoint.value <= self.value):
+            self.trig_count = self.trig_count + 1
 
         # check for an equal condition
-        if self.trigger == Trigger.Equal:
+        elif self.trigger == Trigger.Equal:
             if datapoint == self.value:
-                return True
+                self.trig_count = self.trig_count + 1
+
+        # remember datapoint
         self.prev_datapoint = datapoint
-        return False
+        # if trigger count has matched target count
+        if self.trig_count >= self.count:
+            return True
+        else:
+            return False
 
     def reset(self):
         self.prev_datapoint = None
+        self.trig_count = 0
 
 
 class CountCondition(Condition):
