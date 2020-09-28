@@ -107,7 +107,7 @@ class DataLogger:
 
                 # start condition met, =need to write header to file
                 # create header with time and all signal names
-                self.header.append("time")
+                self.header.append("Time")
                 for datapoint in datapoints:
                     self.header.append(datapoint.name)
 
