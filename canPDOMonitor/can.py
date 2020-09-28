@@ -412,8 +412,10 @@ class Format:
         # rate of data in Hz
         self.rate = rate
 
+        if odr is None:
+            return
         # check for object dictionary
-        if odr is not None:
+        else:
             params = params_from_file(odr)
             if params is None:
                 return

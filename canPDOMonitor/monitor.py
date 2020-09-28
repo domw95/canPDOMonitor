@@ -59,6 +59,8 @@ class Monitor:
         self.filters = []
         # List of dataloggers
         self.dataloggers = []
+        # List of scope windows
+        self.scope_windows = []
 
         # thread to pass all the datapoints around
         self.route_thread = threading.Thread(target=self._route_loop)
@@ -89,6 +91,15 @@ class Monitor:
         """
         self.filters.append(filter)
 
+    def add_scope_window(self, scope_window):
+        """
+        Adds a scope window for the monitor to send datapoints to
+
+        :param scope_window:
+        :type scope_window: :class: `scope.ScopeWindow`
+        """
+        self.scope_windows.append(scope_window)
+
     def start(self):
         """
         Starts the pdo converter and begins routing data to loggers
@@ -103,6 +114,10 @@ class Monitor:
         # start all the DataLoggers
         for datalogger in self.dataloggers:
             datalogger.start()
+
+        # start all the scope windows
+        for scope_window in self.scope_windows:
+            scope_window.start()
 
         self.active.set()
         # start the routing thread
@@ -152,6 +167,10 @@ class Monitor:
             for datalogger in self.dataloggers:
                 datalogger.put(datapoints)
 
+            # pass the datapoints to the scope window
+            for scope_window in self.scope_windows:
+                scope_window.add_datapoints(datapoints)
+
     def _check_loop(self):
         while(self.active.is_set()):
             dl_active = False
@@ -159,8 +178,12 @@ class Monitor:
             for datalogger in self.dataloggers:
                 if datalogger.active.is_set():
                     dl_active = True
+            scope_active = False
+            if (len(self.scope_windows)):
+                scope_active = True
 
-            if not dl_active:
+
+            if not dl_active and not scope_active:
                 logger.info("No more active dataloggers")
                 # no more dataloggers are running, stop monitor
                 self.stop()
