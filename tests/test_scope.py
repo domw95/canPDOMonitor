@@ -3,12 +3,14 @@ Checks the scope display from the monitor
 """
 
 from canPDOMonitor.monitor import Monitor
-from canPDOMonitor.scope import Scope, ScopeWindow, app
+from canPDOMonitor.scope import (Scope, ScopeWindow, app, DisplayMode,
+                                 ScopeTrigger, TriggerEdge)
 from canPDOMonitor.kvaser import Kvaser
 from canPDOMonitor.can import Format
 from canPDOMonitor.datalog import (DataLogger, TimeCondition, CountCondition,
                                    TriggerCondition, Trigger)
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -25,10 +27,33 @@ monitor = Monitor(format=format, device=device)
 # create a scope window
 scope_window = ScopeWindow()
 
-# create a scope to display a signal
-scope = Scope(["Wave Gen Out"], 2000)
+# scope_window.add_scope(Scope(["Wave Gen Out", "In EncoderPos"],
+#                              1000, mode=DisplayMode.Redraw))
+#
+# scope_window.add_scope(Scope(["Wave Gen Out"],
+#                              1000, mode=DisplayMode.Sliding))
+#
+# scope_window.add_scope(Scope(["Wave Gen Out"],
+#                              1000, mode=DisplayMode.Rolling))
+#
+# scope_window.add_scope(Scope(["Wave Gen Out"],
+#                              1000, mode=DisplayMode.Redraw,
+#                              trigger=ScopeTrigger(
+#                              "Wave Gen Out", edge=TriggerEdge.Rising)))
+#
+# scope_window.add_scope(Scope(["Wave Gen Out"],
+#                              1000, mode=DisplayMode.Sliding,
+#                              trigger=ScopeTrigger(
+#                              "Wave Gen Out", edge=TriggerEdge.Rising)))
+#
+# scope_window.add_scope(Scope(["Wave Gen Out"],
+#                              1000, mode=DisplayMode.Rolling,
+#                              trigger=ScopeTrigger(
+#                              "Wave Gen Out", edge=TriggerEdge.Rising)))
 
-scope_window.add_scope(scope)
+scope_window.add_scope(Scope(
+    ["In Pressure{} Cal".format(i) for i in range(1, 6)],
+    1000, mode=DisplayMode.Rolling))
 
 monitor.add_scope_window(scope_window)
 
@@ -42,3 +67,5 @@ monitor.add_scope_window(scope_window)
 monitor.start()
 
 app.exec_()
+
+monitor.stop()

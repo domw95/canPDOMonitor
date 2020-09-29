@@ -175,7 +175,7 @@ class Device(ABC):
             # record this check time and frame count, and wait for next loop
             self.check_time = time.time()
             self.check_frame_count = self.frame_count
-            time.sleep(1)
+            time.sleep(10)
 
 
 class Frame:
