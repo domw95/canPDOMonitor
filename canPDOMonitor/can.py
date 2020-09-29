@@ -5,6 +5,7 @@ Group of classes for CAN and PDO
 
 from abc import ABC, abstractmethod
 from canPDOMonitor.datalog import Datapoint
+from canPDOMonitor.common import params_from_file
 import queue
 import threading
 import logging
@@ -174,7 +175,7 @@ class Device(ABC):
             # record this check time and frame count, and wait for next loop
             self.check_time = time.time()
             self.check_frame_count = self.frame_count
-            time.sleep(1)
+            time.sleep(10)
 
 
 class Frame:
@@ -182,10 +183,13 @@ class Frame:
     Class to hold frame information
     """
 
-    def __init__(self, id=0,
+    def __init__(self, id=0, data=None,
                  timestamp=0, dlc=8, error=False):
         self.id = id
-        self.data = bytearray((0, 0, 0, 0, 0, 0, 0, 0))
+        if data is None:
+            self.data = bytearray((0, 0, 0, 0, 0, 0, 0, 0))
+        else:
+            self.data = data
         self.timestamp = timestamp
         self.dlc = dlc
         self.error = error
@@ -250,6 +254,11 @@ class PDOConverter:
         Current implmentation will read at most 1 or 2 more can frames from
         queue before stopping
         """
+
+        # Pop None on the queue to indicate to consumer that stop is called
+        self.data_queue.put(None)
+
+        # Call for underlying device to stop and wait for thread to end
         self.device.stop()
         self.read_active.clear()
         if self.read_thread.is_alive():
@@ -257,6 +266,13 @@ class PDOConverter:
             if self.read_thread.is_alive():
                 # error ending thread, do something
                 raise ThreadCloseError("PDO Converter read thread not closing")
+
+    def get_datapoints(self):
+        """
+        Returns the next list of datapoints, None if device has stopped
+        """
+
+        return self.data_queue.get(True)
 
     def _read_loop(self):
         """
@@ -365,17 +381,7 @@ class PDOConverter:
             # create a new datapoint
             datapoint = Datapoint(name=frame_format.name[i])
 
-            # check if gain and offset required and add value
-            offset = frame_format.offset[i]
-            gain = frame_format.gain[i]
-
-            if (offset == 0 and frame_format.gain[i] == 1):
-                # normal signal, pass straight through
-                datapoint.value = value
-            else:
-                # apply gain and offset
-                datapoint.raw_value = value
-                datapoint.value = (value + offset)*gain
+            datapoint.value = value
 
             # add the timestamp and time info
             datapoint.timestamp = frame.timestamp
@@ -393,9 +399,12 @@ class Format:
     Init an instance and use add function to add a FrameFormat with id
     the order in which the frames are added determines expected order
     of frames on the bus
+
+    :param odr: Path to a tREU object dictionary to extract PDO info
+    :type odr: :class:`String`
     """
 
-    def __init__(self, rate=1000):
+    def __init__(self, odr=None, rate=1000):
         # init list for storing order of frame ids
         self.order = []
         # init dict for storing frameFormats
@@ -403,10 +412,62 @@ class Format:
         # rate of data in Hz
         self.rate = rate
 
+        if odr is None:
+            return
+        # check for object dictionary
+        else:
+            params = params_from_file(odr)
+            if params is None:
+                return
+
+        # go through the params
+        # check for data rate
+        if "CAN Sys PDO Tx Divider" in params:
+            self.rate = 10000/float(
+                params["CAN Sys PDO Tx Divider"])
+
+        # go through each of the PDOs
+        for i in range(1, 5):
+            # transtype must be 255 for PDO Tx
+            transtype = "CAN Sys PDO{} Tx TransType".format(i)
+            if transtype in params:
+                if params[transtype] == "255":
+                    # PDO<i> enabled, create format with correct id
+                    frame_format = FrameFormat(i*0x100 + 0x81)
+                    # check for 7Q8
+                    if params["CAN Sys Use7q8Format PDO{}".format(i)] == "0":
+                        frame_format.use7Q8 = False
+                        n_values = 2
+                    else:
+                        frame_format.use7Q8 = True
+                        n_values = 4
+
+                    # get all the signal names
+                    for j in range(n_values):
+                        frame_format.name[j] = (
+                            params["CAN Sys PDO{} Tx Ptr{}".format(i, j+1)]
+                        )
+                    self.add(frame_format)
+
     def add(self, frame_format):
         # add tje frame format to the dict
         self.frame[frame_format.id] = frame_format
         self.order.append(frame_format.id)
+
+
+class DefaultFormat(Format):
+    """
+    Creates a :class:`Format` object with some default Frameformats
+    """
+
+    def __init__(self):
+        # init parent Frame class
+        super().__init__()
+        # create the 4 frame classes and add
+        self.add(FrameFormat(0x181, use7Q8=False))
+        self.add(FrameFormat(0x281))
+        self.add(FrameFormat(0x381))
+        self.add(FrameFormat(0x481))
 
 
 class FrameFormat:
@@ -418,13 +479,10 @@ class FrameFormat:
     """
 
     def __init__(self, id, active=True, use7Q8=True,
-                 gain=[1, 1, 1, 1],
-                 offset=[0, 0, 0, 0], name=None):
+                 name=None):
         self.id = id
         self.active = active
         self.use7Q8 = use7Q8
-        self.gain = gain
-        self.offset = offset
         if name is None:
             self.name = [str(id) + '_' + str(x) for x in range(4)]
         else:

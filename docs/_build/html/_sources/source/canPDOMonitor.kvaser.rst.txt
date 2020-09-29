@@ -1,0 +1,7 @@
+canPDOMonitor.kvaser module
+===========================
+
+.. automodule:: canPDOMonitor.kvaser
+   :members:
+   :undoc-members:
+   :show-inheritance:

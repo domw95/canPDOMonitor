@@ -4,4 +4,9 @@ canPDOMonitor
 .. toctree::
    :maxdepth: 4
 
-   canPDOMonitor
+   can
+   common
+   datalog
+   kvaser
+   monitor
+   virtual

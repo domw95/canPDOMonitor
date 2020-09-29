@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>canPDOMonitor.can module &mdash; canPDOMonitor 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="canPDOMonitor.datalog module" href="canPDOMonitor.datalog.html" />
+    <link rel="prev" title="canPDOMonitor namespace" href="canPDOMonitor.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> canPDOMonitor
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">canPDOMonitor</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="canPDOMonitor.html">canPDOMonitor namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="canPDOMonitor.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">canPDOMonitor.can module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="canPDOMonitor.datalog.html">canPDOMonitor.datalog module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="canPDOMonitor.kvaser.html">canPDOMonitor.kvaser module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="canPDOMonitor.virtual.html">canPDOMonitor.virtual module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">canPDOMonitor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">canPDOMonitor</a> &raquo;</li>
+        
+          <li><a href="canPDOMonitor.html">canPDOMonitor namespace</a> &raquo;</li>
+        
+      <li>canPDOMonitor.can module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/canPDOMonitor.can.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-canPDOMonitor.can">
+<span id="canpdomonitor-can-module"></span><h1>canPDOMonitor.can module<a class="headerlink" href="#module-canPDOMonitor.can" title="Permalink to this headline">¶</a></h1>
+<p>Group of classes for CAN and PDO</p>
+<dl class="py class">
+<dt id="canPDOMonitor.can.Device">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bitrate</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Main class for interfacing with CAN hardware.</p>
+<p>Specific hardware devices inherit from this.
+Child classes must implement _start and _stop methods</p>
+<p>CAN frames must be read from devices and placed into frame_queue async
+and thread safe following call to _start method.</p>
+<p>init should call parent constructor with bitrate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bitrate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Int</span></code>) – CAN Bus bitrate in b/s</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="canPDOMonitor.can.Device.DEFAULT_QUEUE_SIZE">
+<code class="sig-name descname">DEFAULT_QUEUE_SIZE</code><em class="property"> = 4000</em><a class="headerlink" href="#canPDOMonitor.can.Device.DEFAULT_QUEUE_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="canPDOMonitor.can.Device.clear_queue">
+<code class="sig-name descname">clear_queue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Device.clear_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely empties the queue</p>
+<p>This will not work well if the CAN device is still running</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="canPDOMonitor.can.Device.get_frame">
+<code class="sig-name descname">get_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Device.get_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the next frame from the queue, blocking execution</p>
+<p>Should be regularly called by whatever process is reciveing the frames
+returns None when can device has been stopped
+:return: Next frame from queue
+:rtype: <code class="xref py py-class docutils literal notranslate"><span class="pre">can.Frame</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="canPDOMonitor.can.Device.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Device.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>To be called externally, calls _start method of class</p>
+<p>Clears the frame queue
+then calls the device-specific _start method</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="canPDOMonitor.can.Device.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Device.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>To be called externally, calls _stop method of class</p>
+<p>Calls the device specific _stop method
+Doesn’t clear queue in case messages still need processing</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="canPDOMonitor.can.Format">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">Format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Contains all PDO format info for the incoming messages</p>
+<p>Init an instance and use add function to add a FrameFormat with id
+the order in which the frames are added determines expected order
+of frames on the bus</p>
+<dl class="py method">
+<dt id="canPDOMonitor.can.Format.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_format</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Format.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="canPDOMonitor.can.Frame">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">Frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">dlc</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">error</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.Frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to hold frame information</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="canPDOMonitor.can.FrameFormat">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">FrameFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use7Q8</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">[1, 1, 1, 1]</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">[0, 0, 0, 0]</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.FrameFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Specifies the format of a PDO frame</p>
+<p>Used in conjunction with Format which holds all details of incoming PDO
+frames and the order which they are expected</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="canPDOMonitor.can.FrameOrderError">
+<em class="property">exception </em><code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">FrameOrderError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.FrameOrderError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="canPDOMonitor.can.FrameQueueOverflowError">
+<em class="property">exception </em><code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">FrameQueueOverflowError</code><a class="headerlink" href="#canPDOMonitor.can.FrameQueueOverflowError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="canPDOMonitor.can.PDOConverter">
+<em class="property">class </em><code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">PDOConverter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">format</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.PDOConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Pulls can frames from can.Device, converts them into data</p>
+<p>Requires an active <code class="xref py py-class docutils literal notranslate"><span class="pre">can.Device</span></code> and Format instance to take raw
+frames and convert them into data
+:param device:
+:type device: <code class="xref py py-class docutils literal notranslate"><span class="pre">can.Device</span></code></p>
+<dl class="py method">
+<dt id="canPDOMonitor.can.PDOConverter.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.PDOConverter.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the CAN hardware device and a thread to read the frames</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="canPDOMonitor.can.PDOConverter.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.PDOConverter.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops the underlying can Device and the read thread</p>
+<p>Current implmentation will read at most 1 or 2 more can frames from
+queue before stopping</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="canPDOMonitor.can.ThreadCloseError">
+<em class="property">exception </em><code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">ThreadCloseError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.ThreadCloseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="canPDOMonitor.can.f7Q8_2_num">
+<code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">f7Q8_2_num</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">byte_arr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.f7Q8_2_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the given LSB 2 byte array to a number using 7Q8 format</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="canPDOMonitor.can.num_2_f7Q8">
+<code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">num_2_f7Q8</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.num_2_f7Q8" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a 2 byte array (LSB) of the given number in 7Q8 format</p>
+<p>If the value of num is less than -128 or greater than 127.99,
+the value will be saturated</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="canPDOMonitor.can.num_2_single">
+<code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">num_2_single</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.num_2_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the given number to 4 byte array (LSB) in single format</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="canPDOMonitor.can.single_2_num">
+<code class="sig-prename descclassname">canPDOMonitor.can.</code><code class="sig-name descname">single_2_num</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">byte_arr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#canPDOMonitor.can.single_2_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the LSB 4 byte array to a single float number</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="canPDOMonitor.datalog.html" class="btn btn-neutral float-right" title="canPDOMonitor.datalog module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="canPDOMonitor.html" class="btn btn-neutral float-left" title="canPDOMonitor namespace" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Dom
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

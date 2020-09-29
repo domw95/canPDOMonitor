@@ -1,0 +1,13 @@
+#!/bin/bash
+# activate the python venv
+echo "Activating virtual environment"
+source ../venv/bin/activate
+
+# run the apidocs command
+echo "Running sphinx apidoc update"
+mkdir _static
+sphinx-apidoc -o source ../canPDOMonitor/ -e -f
+
+# make sphinx html docs
+echo "Making html docs"
+make html

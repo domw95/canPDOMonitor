@@ -3,7 +3,7 @@
 
 import threading
 import time
-import canPDOMonitor.can as can
+from canPDOMonitor import can
 import math
 import random
 import logging

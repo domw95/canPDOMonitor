@@ -1,0 +1,7 @@
+canPDOMonitor.can module
+========================
+
+.. automodule:: canPDOMonitor.can
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -4,7 +4,7 @@ create a virtual env venv inside (python -m venv venv)
 
 activate venv (source bin/activate / Scripts/activate)
 
-install the required repos
+install the required repos (pip install)
 	canlib
 	sphinx
 	sphinx-rtd-theme
@@ -15,3 +15,7 @@ install kvaser canlib for kvaser hardware
 Add a setup.py in root folder
 
 pip install -e . (from root)
+
+# To refresh sphinx apidoc
+sphinx-apidoc -o source ../canPDOMonitor/ -e -f
+

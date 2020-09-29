@@ -5,7 +5,7 @@ from enum import Enum
 import logging
 
 
-class DataLog:
+class DataLogger:
     """
     Writes datapoints to file
 
@@ -59,6 +59,7 @@ class DataLog:
         """
         logger.info("{} datalog started".format(self.filename))
         # start the thead to write the datpoints to file
+        self.active.set()
         self.write_thread.start()
 
     def stop(self, flush=False):
@@ -106,11 +107,9 @@ class DataLog:
 
                 # start condition met, =need to write header to file
                 # create header with time and all signal names
-                self.header.append("time")
+                self.header.append("Time")
                 for datapoint in datapoints:
                     self.header.append(datapoint.name)
-                    if datapoint.raw_value is not None:
-                        self.header.append(datapoint.name + "_raw")
 
                 # indicate that writing to file has begun
                 self.writing.set()
@@ -131,8 +130,6 @@ class DataLog:
                 datapoints[0].time - self.time_offset))
             for d in datapoints:
                 self.file.write("," + str(d.value))
-                if d.raw_value is not None:
-                    self.file.write("," + str(d.raw_value))
 
             # check for end condition, and exit loop if true
             if self.end_condition is not None:
@@ -141,11 +138,28 @@ class DataLog:
 
         self.active.clear()
         self.file.close()
+        logger.info("Writing to {} ended".format(self.filename))
+
+
+class DataLoggerGroup(DataLogger):
+    """
+    Extends functionality of a datalogger to many loggers
+
+    Used for testing, where switching to a new file can be
+    automated based on a condition in a signal. Redcued overhead compared
+    to have a list of dataloggers, as the datapoints only go where required.
+    Also should be easier to setup
+
+    NEEDS IMPLEMENTING
+    """
+
+    def __init__(self, filename):
+        pass
 
 
 class Datapoint:
     def __init__(self, name=None, value=0, time=0,
-                 timestamp=0, index=0, raw_value=None):
+                 timestamp=0, index=0):
         # signal name: string
         self.name = name
         # value: float
@@ -156,8 +170,6 @@ class Datapoint:
         self.time = time
         # index of datapoint since start
         self.index = index
-        # raw value of signal before offset/gain applied (if not 0/1)
-        self.raw_value = raw_value
 
 
 class Condition(ABC):
@@ -198,13 +210,17 @@ class TriggerCondition(Condition):
     :type value: Float, optional
     :param signal_name: Name of signal to check edge, defaults to first signal
     :type signal_name: String, optional
+    :param count: Will return true when trigger activates count times
+    :type count: :class:`Int`
     """
 
-    def __init__(self, trigger, signal_name=None, value=0):
+    def __init__(self, trigger, signal_name=None, value=0, count=1):
         self.trigger = trigger
         self.signal_name = signal_name
         self.value = value
         self.prev_datapoint = None
+        self.count = count
+        self.trig_count = 0
 
     def check(self, datapoints):
         """
@@ -232,26 +248,32 @@ class TriggerCondition(Condition):
         # Look for a rising edge`
         if ((self.trigger == Trigger.Rising or self.trigger == Trigger.Either)
                 and self.prev_datapoint.value < self.value
-                and datapoint.value > self.value):
-            self.prev_datapoint = datapoint
-            return True
+                and datapoint.value >= self.value):
+            self.trig_count = self.trig_count + 1
 
         # Look for a falling edge
-        if ((self.trigger == Trigger.Falling or self.trigger == Trigger.Either)
+        elif ((self.trigger == Trigger.Falling
+                or self.trigger == Trigger.Either)
                 and self.prev_datapoint.value > self.value
-                and datapoint.value < self.value):
-            self.prev_datapoint = datapoint
-            return True
+                and datapoint.value <= self.value):
+            self.trig_count = self.trig_count + 1
 
         # check for an equal condition
-        if self.trigger == Trigger.Equal:
+        elif self.trigger == Trigger.Equal:
             if datapoint == self.value:
-                return True
+                self.trig_count = self.trig_count + 1
+
+        # remember datapoint
         self.prev_datapoint = datapoint
-        return False
+        # if trigger count has matched target count
+        if self.trig_count >= self.count:
+            return True
+        else:
+            return False
 
     def reset(self):
         self.prev_datapoint = None
+        self.trig_count = 0
 
 
 class CountCondition(Condition):

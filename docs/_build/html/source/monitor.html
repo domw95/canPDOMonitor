@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>monitor module &mdash; canPDOMonitor 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="virtual module" href="virtual.html" />
+    <link rel="prev" title="kvaser module" href="kvaser.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> canPDOMonitor
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">canPDOMonitor</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="can.html">can module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common.html">common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datalog.html">datalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kvaser.html">kvaser module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">monitor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtual.html">virtual module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">canPDOMonitor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">canPDOMonitor</a> &raquo;</li>
+        
+      <li>monitor module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/monitor.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-monitor">
+<span id="monitor-module"></span><h1>monitor module<a class="headerlink" href="#module-monitor" title="Permalink to this headline">¶</a></h1>
+<p>Main classes for running the canPDOMonitor</p>
+<p>Monitor routes datapoints from a pdo_converter to attached dataloggers,
+managing the stopping and starting of each.  Can use a CAN_SYS_PDO.order
+object dictionary to choose PDO format</p>
+<dl class="py class">
+<dt id="monitor.Calibrate">
+<em class="property">class </em><code class="sig-prename descclassname">monitor.</code><code class="sig-name descname">Calibrate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">new_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keep</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Calibrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#monitor.FilterType" title="monitor.FilterType"><code class="xref py py-class docutils literal notranslate"><span class="pre">monitor.FilterType</span></code></a></p>
+<p>”
+Defines an offset and gain to be applied to the named signal</p>
+<p>Create a new signal by giving a new_name, keep the old one as well
+by setting keep to True</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – Name of signal to act on</p></li>
+<li><p><strong>offset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>) – Offset applied to signal before gain</p></li>
+<li><p><strong>gain</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>) – Gain applied to signal after offset</p></li>
+<li><p><strong>new_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – Name of new signal. If None, signal value replaced</p></li>
+<li><p><strong>keep</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Bool</span></code>) – If True, creates a new signal with name new_name</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="monitor.Calibrate.process">
+<code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Calibrate.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="monitor.FilterType">
+<em class="property">class </em><code class="sig-prename descclassname">monitor.</code><code class="sig-name descname">FilterType</code><a class="headerlink" href="#monitor.FilterType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for Filter</p>
+<p>Child classes must implement the process method that acts on a list of
+datapoints, can change values, add more etc</p>
+<dl class="py method">
+<dt id="monitor.FilterType.process">
+<em class="property">abstract </em><code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datapoints</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.FilterType.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="monitor.InvalidArgumentsError">
+<em class="property">exception </em><code class="sig-prename descclassname">monitor.</code><code class="sig-name descname">InvalidArgumentsError</code><a class="headerlink" href="#monitor.InvalidArgumentsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="monitor.Monitor">
+<em class="property">class </em><code class="sig-prename descclassname">monitor.</code><code class="sig-name descname">Monitor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">format</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pdo_converter</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Routes datapoints from the pdo_converter to any attached dataloggers</p>
+<p>Typical usage: Optionally include a Device, leave format and pdo_converter
+blank.  Format will then include the PDO specifications from the
+CAN_SYS_PDO.odr file in the current directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device</strong> (<a class="reference internal" href="can.html#can.Device" title="can.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">can.Device</span></code></a>) – Defaults to <a class="reference internal" href="virtual.html#virtual.Virtual" title="virtual.Virtual"><code class="xref py py-class docutils literal notranslate"><span class="pre">virtual.Virtual</span></code></a>, with its defaults</p></li>
+<li><p><strong>format</strong> (<a class="reference internal" href="can.html#can.Format" title="can.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">can.Format</span></code></a>) – Defaults to object dict in local directory, then class
+default for <a class="reference internal" href="can.html#can.Format" title="can.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">can.Format</span></code></a></p></li>
+<li><p><strong>pdo_converter</strong> (<a class="reference internal" href="can.html#can.PDOConverter" title="can.PDOConverter"><code class="xref py py-class docutils literal notranslate"><span class="pre">can.PDOConverter</span></code></a>) – Defaults to PDOConverter with device and format
+given in the constructor</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="monitor.Monitor.add_datalogger">
+<code class="sig-name descname">add_datalogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datalogger</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Monitor.add_datalogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a datalogger to the monitor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>datalogger</strong> (<a class="reference internal" href="datalog.html#datalog.DataLogger" title="datalog.DataLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">datalog.DataLogger</span></code></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="monitor.Monitor.add_filter">
+<code class="sig-name descname">add_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Monitor.add_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add filter to be applied in between the pdo converter and logger/graphs</p>
+<p>filter is one the classes deriving from <a class="reference internal" href="#monitor.FilterType" title="monitor.FilterType"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterType</span></code></a> base class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filter</strong> (<a class="reference internal" href="#monitor.FilterType" title="monitor.FilterType"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterType</span></code></a>) – A filter to be applied the datapoints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="monitor.Monitor.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Monitor.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the pdo converter and begins routing data to loggers</p>
+<p>This must be called after all the dataloggers are added</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="monitor.Monitor.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#monitor.Monitor.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops the monitor and all attached items</p>
+<p>Calling this should successfully end all threads in PDOConverter,
+Device and all dataloggers</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="virtual.html" class="btn btn-neutral float-right" title="virtual module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="kvaser.html" class="btn btn-neutral float-left" title="kvaser module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Dom
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
