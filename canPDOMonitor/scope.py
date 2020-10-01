@@ -106,12 +106,13 @@ class Scope(pg.PlotItem):
     Line_Colours = ["c", "m", "y", "g", "r", "b"]
 
     def __init__(self, signal_names, ndatapoints, trigger=None, mode=None,
-                 yrange=None):
+                 yrange=None, title=None):
         super().__init__()
         # store args
         self.signal_names = signal_names
         self.ndatapoints = ndatapoints
         self.trigger = trigger
+        self.title = title
         if mode is None:
             self.mode = DisplayMode.Rolling
         else:
@@ -124,13 +125,15 @@ class Scope(pg.PlotItem):
             ndatapoints=ndatapoints,
             mode=mode
         )
+        self.addLegend()
+        #self.setTitle(title)
         # plot data items to display on scope
         self.plot_data_item = {}
         for i, signal in enumerate(self.signal_names):
             # create a plot item (line) for displaying and add to scope
-            self.plot_data_item[signal] = pg.PlotDataItem()
-            self.addItem(self.plot_data_item[signal])
+            self.plot_data_item[signal] = pg.PlotDataItem(name=signal)
             self.plot_data_item[signal].setPen(color=self.Line_Colours[i])
+            self.addItem(self.plot_data_item[signal])
 
         # thread for pulling in data
         self.data_thread = threading.Thread(target=self._data_loop)

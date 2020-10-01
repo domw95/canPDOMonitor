@@ -48,43 +48,45 @@ for i, (o, g) in enumerate(zip(offset, gain)):
 # create a scope window
 scope_window = ScopeWindow()
 
-# # create a position scope that triggers on wave gen out
-# scope_window.add_scope(Scope(["Wave Gen Out", "In EncoderPos"],
-#                              1000, mode=DisplayMode.Redraw,
-#                              trigger=ScopeTrigger(
-#                              "Wave Gen Out",
-#                              edge=TriggerEdge.Rising)))
+# create a position scope that triggers on wave gen out
+scope_window.add_scope(Scope(["Wave Gen Out", "In EncoderPos"],
+                             1000, mode=DisplayMode.Redraw,
+                             title="Position Tracking",
+                             trigger=ScopeTrigger(
+                             "Wave Gen Out",
+                             edge=TriggerEdge.Rising)))
+
+# create a pressure scope that freeruns
+scope_window.add_scope(Scope(
+    ["In Pressure{}".format(i) for i in range(1, 5)],
+    1000, mode=DisplayMode.Rolling,
+    title="Pressures",
+    trigger=ScopeTrigger(
+        "Wave Gen Out",
+        edge=TriggerEdge.Rising)))
+
+# create a spool position scope that triggers on wave gen out
+scope_window.add_scope(Scope(["Spl Loop Demand", "In SpoolPos"],
+                             1000, mode=DisplayMode.Redraw,
+                             trigger=ScopeTrigger(
+                             "Wave Gen Out",
+                             edge=TriggerEdge.Rising)))
+
+# scope_window.add_scope(Scope(["In Pressure1 Raw"],
+#                              10000, mode=DisplayMode.Rolling,
+#                              ))
 #
-# # create a pressure scope that freeruns
-# scope_window.add_scope(Scope(
-#     ["In Pressure{}".format(i) for i in range(1, 5)],
-#     1000, mode=DisplayMode.Rolling,
-#     trigger=ScopeTrigger(
-#         "Wave Gen Out",
-#         edge=TriggerEdge.Rising)))
+# scope_window.add_scope(Scope(["In Pressure2 Raw"],
+#                              10000, mode=DisplayMode.Rolling,
+#                              ))
 #
-# # create a spool position scope that triggers on wave gen out
-# scope_window.add_scope(Scope(["Spl Loop Demand", "In SpoolPos"],
-#                              1000, mode=DisplayMode.Redraw,
-#                              trigger=ScopeTrigger(
-#                              "Wave Gen Out",
-#                              edge=TriggerEdge.Rising)))
-
-scope_window.add_scope(Scope(["In Pressure1 Raw"],
-                             10000, mode=DisplayMode.Rolling,
-                             ))
-
-scope_window.add_scope(Scope(["In Pressure2 Raw"],
-                             10000, mode=DisplayMode.Rolling,
-                             ))
-
-scope_window.add_scope(Scope(["In Pressure3 Raw"],
-                             10000, mode=DisplayMode.Rolling,
-                             ))
+# scope_window.add_scope(Scope(["In Pressure3 Raw"],
+#                              10000, mode=DisplayMode.Rolling,
+#                              ))
 # create a scope for force
-scope_window.add_scope(Scope(["In Pressure5 Raw"],
-                             10000, mode=DisplayMode.Rolling,
-                             ))
+# scope_window.add_scope(Scope(["In Pressure5 Raw"],
+#                              10000, mode=DisplayMode.Rolling,
+#                              ))
 
 
 # attach the scope to the monitor

@@ -355,7 +355,9 @@ class PDOConverter:
             return
         else:
             # error, incorrect frame order
-            self.stop()
+            # pop None on the queue as that will indicate for higher devices
+            # to stop
+            self.data_queue.put(None)
             raise FrameOrderError("{},{},{}".format(frame.id,
                                                     expected_ind,
                                                     self.prev_frame_ind))
