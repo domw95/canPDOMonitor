@@ -28,29 +28,38 @@ monitor = Monitor(format=format, device=device)
 scope_window = ScopeWindow()
 
 # create a position scope that triggers on wave gen out
+# scope_window.add_scope(Scope(["mAct P1", "mAct P2"],
+#                              1000, mode=DisplayMode.Redraw,
+#                              title="Position Tracking",
+#                              trigger=ScopeTrigger(
+#                              "Wave Gen Out",
+#                              edge=TriggerEdge.Rising)))
+
 scope_window.add_scope(Scope(["Wave Gen Out", "mLoad Position mm"],
-                             1000, mode=DisplayMode.Redraw,
+                             1000, 1000, mode=DisplayMode.Redraw,
                              title="Position Tracking",
+                             yrange=50,
                              trigger=ScopeTrigger(
                              "Wave Gen Out",
                              edge=TriggerEdge.Rising)))
 
-scope_window.add_scope(Scope(["mAct P1", "mAct P2"],
-                             1000, mode=DisplayMode.Redraw,
+scope_window.add_scope(Scope(["Wave Gen Out", "mLoad Position mm"],
+                             1000, 1000, mode=DisplayMode.Redraw,
                              title="Position Tracking",
+                             yrange=[-20, 40],
                              trigger=ScopeTrigger(
                              "Wave Gen Out",
                              edge=TriggerEdge.Rising)))
 
 scope_window.add_scope(Scope(["Spl Loop Demand", "mSpl Position"],
-                             1000, mode=DisplayMode.Redraw,
+                             1000, 1000, mode=DisplayMode.Redraw,
                              title="Position Tracking",
                              trigger=ScopeTrigger(
                              "Wave Gen Out",
                              edge=TriggerEdge.Rising)))
 
 scope_window.add_scope(Scope(["mAct Fh"],
-                             1000, mode=DisplayMode.Redraw,
+                             1000, 1000, mode=DisplayMode.Redraw,
                              title="Position Tracking",
                              trigger=ScopeTrigger(
                              "Wave Gen Out",

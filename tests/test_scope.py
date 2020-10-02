@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # pdo format
-format = Format(odr="CAN_SYS_PDO_default.odr")
+format = Format(odr="CAN_SYS_PDO_ISA_model.odr")
 
 # device
 device = Kvaser()
@@ -27,33 +27,45 @@ monitor = Monitor(format=format, device=device)
 # create a scope window
 scope_window = ScopeWindow()
 
-# scope_window.add_scope(Scope(["Wave Gen Out", "In EncoderPos"],
-#                              1000, mode=DisplayMode.Redraw))
-#
-# scope_window.add_scope(Scope(["Wave Gen Out"],
-#                              1000, mode=DisplayMode.Sliding))
-#
-# scope_window.add_scope(Scope(["Wave Gen Out"],
-#                              1000, mode=DisplayMode.Rolling))
-#
-# scope_window.add_scope(Scope(["Wave Gen Out"],
-#                              1000, mode=DisplayMode.Redraw,
-#                              trigger=ScopeTrigger(
-#                              "Wave Gen Out", edge=TriggerEdge.Rising)))
-#
-# scope_window.add_scope(Scope(["Wave Gen Out"],
-#                              1000, mode=DisplayMode.Sliding,
-#                              trigger=ScopeTrigger(
-#                              "Wave Gen Out", edge=TriggerEdge.Rising)))
-#
-# scope_window.add_scope(Scope(["Wave Gen Out"],
-#                              1000, mode=DisplayMode.Rolling,
-#                              trigger=ScopeTrigger(
-#                              "Wave Gen Out", edge=TriggerEdge.Rising)))
+scope_window.add_scope(Scope(["Wave Gen Out", "mLoad Position mm"],
+                             1000, 1000, mode=DisplayMode.Redraw,
+                             title="Redraw",
+                             yrange=50,
+                             trigger=ScopeTrigger(
+                             "Wave Gen Out",
+                             edge=TriggerEdge.Rising)))
 
-scope_window.add_scope(Scope(
-    ["In Pressure{} Cal".format(i) for i in range(1, 6)],
-    1000, mode=DisplayMode.Rolling))
+scope_window.add_scope(Scope(["Wave Gen Out", "mLoad Position mm"],
+                             1000, 1000, mode=DisplayMode.Rolling,
+                             title="Rolling",
+                             yrange=50,
+                             trigger=ScopeTrigger(
+                             "Wave Gen Out",
+                             edge=TriggerEdge.Rising)))
+
+scope_window.add_scope(Scope(["Wave Gen Out", "mLoad Position mm", "Spl Loop Demand", "mSpl Position"],
+                             1000, 1000, mode=DisplayMode.Sliding,
+                             title="Sliding",
+                             yrange=40,
+                             trigger=ScopeTrigger(
+                             "Wave Gen Out",
+                             edge=TriggerEdge.Rising)))
+
+scope_window.add_scope(Scope(["Wave Gen Out", "mLoad Position mm"],
+                             1000, 1000, mode=DisplayMode.Sliding,
+                             title="Sliding", time_zero=False,
+                             yrange=50,
+                             trigger=ScopeTrigger(
+                             "Wave Gen Out",
+                             edge=TriggerEdge.Rising)))
+
+# scope_window.add_scope(Scope(["Wave Gen Out", "mLoad Position mm"],
+#                              1000, 1000, mode=DisplayMode.Redraw,
+#                              title="Position Tracking",
+#                              yrange=50,
+#                              trigger=ScopeTrigger(
+#                              "Wave Gen Out",
+#                              edge=TriggerEdge.Rising)))
 
 monitor.add_scope_window(scope_window)
 
