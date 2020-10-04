@@ -83,9 +83,10 @@ class Virtual(can.Device):
         frame = can.Frame(id=self.order[self.order_ind],
                           timestamp=time.time() - self.start_time)
         if frame.id == 0x181:
-            value = math.sin(2*math.pi*1*self.data_count/1000)
-            frame.data[0:4] = can.num_2_single(value)
-            frame.data[4:8] = can.num_2_single(random.gauss(0, 1))
+            value1 = math.sin(2*math.pi*1*self.data_count/1000)
+            value2 = math.sin((3/2)*math.pi*1*self.data_count/1000)
+            frame.data[0:4] = can.num_2_single(value1)
+            frame.data[4:8] = can.num_2_single(value2)
 
         elif frame.id == 0x281:
             frame.data[0:2] = can.num_2_f7Q8(1)
