@@ -10,7 +10,6 @@ from collections import deque
 import threading
 import queue
 import logging
-import time
 
 # Enable antialiasing for prettier plots
 pg.setConfigOptions(antialias=True)
@@ -18,7 +17,7 @@ pg.setConfigOptions(antialias=True)
 app = QtWidgets.QApplication([])
 
 
-class ScopeWindow(QtWidgets.QMainWindow):
+class ScopeWindow(pg.GraphicsLayoutWidget):
     """
     Window for displaying scopes
     """
@@ -28,9 +27,6 @@ class ScopeWindow(QtWidgets.QMainWindow):
         # set window title
         self.setWindowTitle("Scope")
         # create layout widget in which to place scopes
-        self.layout = pg.GraphicsLayoutWidget()
-        # add layout as main widget
-        self.setCentralWidget(self.layout)
         # maximise the window
         self.showMaximized()
         # list of scopes to show
@@ -84,7 +80,7 @@ class ScopeWindow(QtWidgets.QMainWindow):
             for i in range(rows[ind]):
                 for j in range(cols[ind]):
                     if n < nscopes:
-                        self.layout.addItem(
+                        self.addItem(
                             self.scopes[n],
                             row=i,
                             col=j
@@ -100,36 +96,71 @@ class Scope(pg.PlotItem):
 
     :param signal_names: List of signals to show on this scope
     :type signal_names: :class: `String`
-    :param ndatapoints: Number of datapoints to display
-    :type ndatapoints: :class: `Int`
+    :param samples: Number of datapoints to display
+    :type samples: :class: `Int`
+    :param trigger: Trigger for start of plot
+    :type trigger: :class:`ScopeTrigger`
+    :param mode: Rolling, Redraw or Sliding
+    :type mode: :class:`DisplayMode`
+    :param yrange: Single value for symmetric or list for min/max, auto if not
+        set
+    :type yrange: :class:`Float`
+    :param title: Title to display above scope
+    :type title: :class:`String`
+    :param time_zero: If true, the scope starts at t=0 for each trigger.
+        For rolling scopes this has no effect
+    :type time_zero: :class:`Bool`
     """
     Line_Colours = ["c", "m", "y", "g", "r", "b"]
 
-    def __init__(self, signal_names, ndatapoints, trigger=None, mode=None,
-                 yrange=None):
-        super().__init__()
+    def __init__(self, signal_names,
+                 nsamples=None, samplerate=None, samplelength=None,
+                 trigger=None, mode=None,
+                 yrange=None, title=None, time_zero=True):
+        super(Scope, self).__init__()
         # store args
         self.signal_names = signal_names
-        self.ndatapoints = ndatapoints
         self.trigger = trigger
+        self.title = title
         if mode is None:
             self.mode = DisplayMode.Rolling
         else:
             self.mode = mode
+
+        if (nsamples is None and samplerate is not None
+                and samplelength is not None):
+            # calc number of samples from rate and time
+            nsamples = round(samplerate * samplelength)
+        elif (nsamples is not None and samplerate is None
+                and samplelength is not None):
+            # calc rate from samples and time
+            samplerate = nsamples / samplelength
+        elif (nsamples is not None and samplerate is not None
+                and samplelength is None):
+            # calc length from samples and rate
+            samplelength = nsamples / samplerate
+        else:
+            raise InsufficientArgumentsError
+
+        self.nsamples = nsamples
+        self.samplelength = samplelength
+        self.samplerate = samplerate
+
         # queue for incoming datapoints
         self.data_queue = queue.Queue()
         # buffer for holding the plot data and time values
         self.buffer = ScopeBuffer(
             signal_names=signal_names + ["Time"],
-            ndatapoints=ndatapoints,
+            ndatapoints=self.nsamples,
             mode=mode
         )
+        self.addLegend(offset=(10, -10))
+        self.setTitle(title)
         # plot data items to display on scope
         self.plot_data_item = {}
         for i, signal in enumerate(self.signal_names):
             # create a plot item (line) for displaying and add to scope
-            self.plot_data_item[signal] = pg.PlotDataItem()
-            self.addItem(self.plot_data_item[signal])
+            self.plot_data_item[signal] = self.plot(name=signal)
             self.plot_data_item[signal].setPen(color=self.Line_Colours[i])
 
         # thread for pulling in data
@@ -140,6 +171,45 @@ class Scope(pg.PlotItem):
 
         # plot item stuff
         self.showGrid(x=True, y=True)
+        self.setMouseEnabled(False, False)
+        # initiall disable autorange
+        self.disableAutoRange()
+        # set yrange if argument given
+        if yrange is not None:
+            if isinstance(yrange, list):
+                self.setYRange(*yrange)
+            else:
+                self.setYRange(-yrange, yrange)
+        else:
+            # enable autorange if no yrange specified
+            self.enableAutoRange(y=True)
+
+        # offset used to time data to align first datapoint on plot with 0
+        self.time_offset = 0
+        # cannot offset time with no trigger
+        if trigger is None:
+            time_zero = False
+        self.time_zero = time_zero
+
+        if self.mode is DisplayMode.Rolling:
+            # always autorange as time is alwasy changing
+            self.enableAutoRange(x=True)
+            # disable zeroing time as irrelevant for rolling
+            self.time_zero = False
+        elif self.mode is DisplayMode.Redraw:
+            if time_zero:
+                # can fix range
+                self.setXRange(0, self.samplelength, padding=0)
+            else:
+                # autorange for incrementing time
+                self.enableAutoRange(x=True)
+        elif self.mode is DisplayMode.Sliding:
+            if time_zero:
+                # can fix range
+                self.setXRange(0, self.samplelength, padding=0)
+            else:
+                # autorange for incrementing time
+                self.enableAutoRange(x=True)
 
     def start(self):
         # start the scope threads
@@ -173,7 +243,7 @@ class Scope(pg.PlotItem):
                 logger.warn("No Matching Signal names")
                 continue
 
-            # create dict of values
+            # create dict of values, offsetting time value if required
             values = {"Time": signals[0].time}
             for sig in signals:
                 values[sig.name] = sig.value
@@ -188,6 +258,8 @@ class Scope(pg.PlotItem):
                             values[self.trigger.name] = d.value
                 if self.triggered:
                     # scope has been triggered, put data in buffer
+                    # adjust time
+                    values["Time"] = values["Time"] - self.time_offset
                     if self.buffer.append(values):
                         # buffer has filled, rearm trigger with current values
                         logger.debug("Buffer Full")
@@ -195,10 +267,13 @@ class Scope(pg.PlotItem):
                         self.triggered = False
                 else:
                     # need to check trigger
-
                     if self.trigger.check(values):
                         logger.debug("Triggered")
                         self.triggered = True
+                        # check if time should start at 0
+                        if self.time_zero:
+                            self.time_offset = values["Time"]
+                            values["Time"] = 0
                         self.buffer.append(values)
 
     def _refresh_scope(self):
@@ -208,12 +283,15 @@ class Scope(pg.PlotItem):
         # go through each signal and set data on plot
         # logger.debug("Updating scope")
         data = self.buffer.get_data()
+
         if data is not None:
             for signal in self.signal_names:
                 self.plot_data_item[signal].setData(
                     data["Time"],
                     data[signal]
                 )
+
+            # set ranges if required
 
 
 class ScopeBuffer():
@@ -477,6 +555,10 @@ class SignalMismatchError(Exception):
 
 
 class TriggerNameError(Exception):
+    pass
+
+
+class InsufficientArgumentsError(Exception):
     pass
 
 
