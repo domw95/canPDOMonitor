@@ -186,6 +186,9 @@ class Scope(pg.PlotItem):
 
         # offset used to time data to align first datapoint on plot with 0
         self.time_offset = 0
+        # cannot offset time with no trigger
+        if trigger is None:
+            time_zero = False
         self.time_zero = time_zero
 
         if self.mode is DisplayMode.Rolling:
@@ -280,6 +283,7 @@ class Scope(pg.PlotItem):
         # go through each signal and set data on plot
         # logger.debug("Updating scope")
         data = self.buffer.get_data()
+
         if data is not None:
             for signal in self.signal_names:
                 self.plot_data_item[signal].setData(

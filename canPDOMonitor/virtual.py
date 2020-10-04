@@ -82,17 +82,22 @@ class Virtual(can.Device):
 
         frame = can.Frame(id=self.order[self.order_ind],
                           timestamp=time.time() - self.start_time)
+        td = self.data_count/1000
         if frame.id == 0x181:
-            value1 = math.sin(2*math.pi*1*self.data_count/1000)
-            value2 = math.sin((3/2)*math.pi*1*self.data_count/1000)
+            value1 = math.sin(2*math.pi*1.1*td)
+            value2 = math.sin((2*math.pi*1.1*td)-(math.pi/4))
             frame.data[0:4] = can.num_2_single(value1)
             frame.data[4:8] = can.num_2_single(value2)
 
         elif frame.id == 0x281:
-            frame.data[0:2] = can.num_2_f7Q8(1)
+            frame.data[0:2] = can.num_2_f7Q8(math.sin(2*math.pi*1*td))
+            frame.data[2:4] = can.num_2_f7Q8(math.sin((2*math.pi*1*td) - math.pi/3))
+            frame.data[4:6] = can.num_2_f7Q8(math.sin((2*math.pi*1*td) - 2*math.pi/3))
+            frame.data[6:8] = can.num_2_f7Q8(math.sin((2*math.pi*1*td) - math.pi))
             pass
         elif frame.id == 0x381:
-            pass
+            frame.data[0:2] = can.num_2_f7Q8(math.sin((2*math.pi*1*td) - 4*math.pi/3))
+            frame.data[2:4] = can.num_2_f7Q8(math.sin((2*math.pi*1*td) - 5*math.pi/3))
         elif frame.id == 0x481:
             frame.data[0] = 1
             pass
