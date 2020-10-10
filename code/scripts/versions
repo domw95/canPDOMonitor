@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cmake_ver=3.14.3
+devtoolset_ver=8
