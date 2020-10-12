@@ -1,3 +1,6 @@
+#ifndef SOCKET_H_
+#define SOCKET_H_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -30,4 +33,6 @@ class Socket
 };
 
 
-}
+}  // namespace connections
+
+#endif  // SOCKET_H_

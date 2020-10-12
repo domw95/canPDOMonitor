@@ -2,6 +2,7 @@ import threading
 import queue
 import time
 import random
+import json
 
 
 class DaveysScopeServer:
@@ -62,7 +63,8 @@ class DaveysScopeServer:
             datapoints = self.data_queue.get(True)
 
             # INSERT SOCKET SEND SHIT HERE
-            print("Send to server:", datapoints[0:2])
+            # print("Send to server:", datapoints[0:2])
+            print(datapoints[0:2])
 
 
 def data_gen_loop():
@@ -70,14 +72,24 @@ def data_gen_loop():
     start_time = time.time()
     data_count = 0
     while active.is_set():
-        datapoints = [("Time", data_count*0.001)]
+        #datapoints = [("Time", data_count*0.001)]
+        datapoints = []
+      
         for i in range(16):
-            datapoints.append(("Signal_{}".format(i), random.gauss(10*i, 1)))
+            #datapoints.append(("Signal_{}".format(i), random.gauss(10*i, 1)))
+            Signal = "Signal_{}".format(i)
+            Gauss =  random.gauss(10*i,i)
+            datapoint = {'Time':data_count*0.001,Signal:Gauss}
+            #datapoint["Signal"] = Gauss
+            #print(datapoint)
+            print(json.dumps(datapoint))
+            #exit()
+            datapoints.append(json.dumps(datapoint))
+          
         scope_server.add_datapoints(datapoints)
         data_count = data_count + 1
         if (data_count / (time.time() - start_time)) > data_rate:
             time.sleep(0.001)
-
 
 if __name__ == "__main__":
     # create a scope server and start it
