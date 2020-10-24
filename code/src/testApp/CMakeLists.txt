@@ -4,6 +4,8 @@ add_executable(
   testApp
      $<TARGET_OBJECTS:socket>
      $<TARGET_OBJECTS:client>
+    coreWorkflow.h 
+    coreWorkflow.cpp 
   main.cpp
 )
 
@@ -22,7 +24,7 @@ target_link_libraries(
 target_compile_options(
   testApp
     PRIVATE
-       ${_subco_compiler_warning_flags} -Wno-write-strings -Wno-memaccess
+       ${_s_compiler_warning_flags} -Wno-write-strings -Wno-memaccess
 )
 
 install(

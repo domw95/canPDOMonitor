@@ -64,7 +64,7 @@ class DaveysScopeServer:
 
             # INSERT SOCKET SEND SHIT HERE
             # print("Send to server:", datapoints[0:2])
-            print(datapoints[0:2])
+            print(json.dumps(datapoints[0:2]))
 
 
 def data_gen_loop():
@@ -82,9 +82,9 @@ def data_gen_loop():
             datapoint = {'Time':data_count*0.001,Signal:Gauss}
             #datapoint["Signal"] = Gauss
             #print(datapoint)
-            print(json.dumps(datapoint))
+            #print(json.dumps(datapoint))
             #exit()
-            datapoints.append(json.dumps(datapoint))
+            datapoints.append(datapoint)
           
         scope_server.add_datapoints(datapoints)
         data_count = data_count + 1

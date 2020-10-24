@@ -9,7 +9,6 @@ set_pegasus_build_env()
 
 
 # This if statement provides the opportunity to override the project's version on the command line
-# i.e. cmake -DSUBSCRIBER_CORRELATOR_VERSION=1.2.3
 if ("${CAN_PDO_MONITOR_VERSION}" STREQUAL "")
   # If no version is provided, we assume it's a dev build which are all versioned 0.0.0
   set(CAN_PDO_MONITOR_VERSION 0.0.0)
@@ -59,7 +58,7 @@ find_hydra_lib(log4cxx VERSION 0.10.0 INSTALL_RPATH)
 find_hydra_lib(libpcap VERSION 1.9.0 INSTALL_RPATH)
 
 pegasus_cppcheck(
-  EXCLUDE_PATTERNS ${SUBCO_STATIC_ANALYSIS_EXCLUDES}
+  EXCLUDE_PATTERNS ${S_STATIC_ANALYSIS_EXCLUDES}
   ARGS
     "--platform=unix64"
     "--std=c++14"
@@ -75,7 +74,7 @@ pegasus_cppcheck(
 )
 #jjad really fucking hates pegasus linting
 #pegasus_cpplint(
-#  EXCLUDE_PATTERNS ${SUBCO_STATIC_ANALYSIS_EXCLUDES}
+#  EXCLUDE_PATTERNS ${S_STATIC_ANALYSIS_EXCLUDES}
 #)
 
 #

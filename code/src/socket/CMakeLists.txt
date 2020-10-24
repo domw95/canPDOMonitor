@@ -9,7 +9,7 @@ add_library(
 target_compile_options(
   socket
     PRIVATE
-      ${_subco_compiler_warning_flags} -Wno-write-strings -Wno-class-memaccess 
+      ${_s_compiler_warning_flags} -Wno-write-strings -Wno-class-memaccess 
 )
 
 target_include_directories(

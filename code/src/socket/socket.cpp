@@ -3,15 +3,15 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <unistd.h>
 #include <string>
 #include <arpa/inet.h>
-#include <string.h>
 #include <stdio.h>
+#include <string>
 #include "socket.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 #include <iostream>
+#include <regex>
 
 using namespace std;
 namespace connections
@@ -46,36 +46,27 @@ void Socket::setupSocket()
     int clientSock=accept(serverSock,(struct sockaddr*)&clientAddr, &sin_size);
     // testcode
     rapidjson::Document d;
-    rapidjson::StringBuffer strbuffer;
 
     // ends
     while (1 == 1)
     {
-            //receive a message from a client
-            n = read(clientSock, buffer, 500);
-            // cout << "Confirmation code  " << n << endl;
-            cout << buffer << endl;
-            // testcode
-//            for (auto element : buffer)
-//            {
-//              d.Parse(buffer);
-//              rapidjson::Writer<rapidjson::StringBuffer> writer(strbuffer);
-//
-//              d.Accept(writer);
-//              // Output {"project":"rapidjson","stars":11}
-//              std::cout << strbuffer.GetString() << " = received  " << std::endl;
-//              buffer.clear()
-//            }
-            d.Parse(buffer);
-//            cout << buffer << endl;
-            rapidjson::Writer<rapidjson::StringBuffer> writer(strbuffer);
-            d.Accept(writer);
-            /// std::cout << strbuffer.GetString() << " = received  " << std::endl;
-            bzero(buffer, 1024);
-            // ends
-            strcpy(buffer, "test");
-            n = write(clientSock, buffer, strlen(buffer));
-            cout << "Confirmation code  " << n << endl;
+        //receive a message from a client
+        n = read(clientSock, buffer, 500);
+        std::string bufferString = buffer;
+        bufferString.erase(bufferString.find("}") + 1);
+        // std::regex regexMatch("(?<=\})(,)");
+        // std::cout << bufferString << std::endl;
+
+        d.Parse(bufferString.c_str());
+        // d.SetObject();
+
+        // TODO(jjad) testcode
+        rapidjson::StringBuffer strbuffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(strbuffer);
+        d.Accept(writer);
+        std::cout << strbuffer.GetString() << std::endl;
+        // testCodeEnds
+        bzero(buffer, 1024);
     }
   }
 }
