@@ -420,6 +420,7 @@ class Format:
         else:
             params = params_from_file(odr)
             if params is None:
+                print("No parameters in odr")
                 return
 
         # go through the params
@@ -452,7 +453,7 @@ class Format:
                     self.add(frame_format)
 
     def add(self, frame_format):
-        # add tje frame format to the dict
+        # add the frame format to the dict
         self.frame[frame_format.id] = frame_format
         self.order.append(frame_format.id)
 

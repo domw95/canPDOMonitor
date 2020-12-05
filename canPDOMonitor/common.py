@@ -28,6 +28,7 @@ def params_from_file(filename):
         file.close()
     # catch file not found error
     except FileNotFoundError:
+        print("File does not exist")
         return None
     # return params
     return params
