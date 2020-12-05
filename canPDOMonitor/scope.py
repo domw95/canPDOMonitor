@@ -214,7 +214,7 @@ class Scope(pg.PlotItem):
     def start(self):
         # start the scope threads
         self.data_thread.start()
-        self.display_timer.start(100)
+        self.display_timer.start(200)
 
     def add_datapoints(self, datapoints):
         """
