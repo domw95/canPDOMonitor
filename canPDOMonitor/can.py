@@ -310,9 +310,6 @@ class PDOConverter:
         Takes a frame and uses format to convert to signals
         """
 
-        # ditch frame if we arent interested in it
-        # if (frame.id not in self.format.order):
-        #     return
         # check if still waiting for initial message
         if (self.state == "Starting" and frame.id == self.format.order[0]):
             # have recieved first message in sequence
