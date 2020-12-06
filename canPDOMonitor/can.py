@@ -32,9 +32,13 @@ class Device(ABC):
     # 4000 is 1 second of 4 PDOs at 1KHz
     DEFAULT_QUEUE_SIZE = 4000
 
-    def __init__(self, bitrate):
+    def __init__(self, bitrate, check_time=10):
+        # can bitrate of device
         self.bitrate = bitrate
+        # queue to hold can frames
         self.frame_queue = queue.Queue(maxsize=self.DEFAULT_QUEUE_SIZE)
+        # time in seconds to report device info
+        self.check_time = int(check_time)
 
         # total number of frames from device
         self.frame_count = 0
@@ -54,6 +58,11 @@ class Device(ABC):
         # lock for reading/changing active flag
         self.active_lock = threading.Lock()
 
+        # thread used for stopping device
+        self.stop_thread = threading.Thread(target=self.stop_check)
+        # event used to trigger device stopping
+        self.stop_trigger = threading.Event()
+
     def start(self):
         """
         To be called externally, calls _start method of class
@@ -62,7 +71,7 @@ class Device(ABC):
         then calls the device-specific _start method
         """
 
-        logger.info("Starting can Device")
+        logger.info("Starting CAN Device")
         # clear the frame queue and start device
         self.clear_queue()
 
@@ -74,6 +83,9 @@ class Device(ABC):
         # start the checking thread
         self.check_thread.start()
 
+        # start the internal stop thread
+        self.stop_thread.start()
+
     def stop(self):
         """
         To be called externally, calls _stop method of class
@@ -81,17 +93,31 @@ class Device(ABC):
         Calls the device specific _stop method
         Doesn't clear queue in case messages still need processing
         """
+        if self.active.is_set():
+            logger.debug("Stopping CAN Device")
+            # add None to queue to indicate to consumer to stop
+            self._add_to_queue(None)
 
-        logger.info("Stopping can Device")
-        # add None to queue to indicate to consumer to stop
-        self._add_to_queue(None)
+            # stop the device
+            with self.active_lock:
+                self._stop()
+                self.active.clear()
+                if self.check_thread.is_alive():
+                    self.check_thread.join()
+            # finally, stop the stop check thread
+            self.stop_trigger.set()
+            logger.info("CAN Device Stopped")
 
-        # stop the device
-        with self.active_lock:
-            self._stop()
-            self.active.clear()
-            if self.check_thread.is_alive():
-                self.check_thread.join()
+    def stop_check(self):
+        """
+        Waits for the command to stop, and calls stop, for internal threads
+        """
+        # wait for the stop trigger
+        self.stop_trigger.wait()
+        # check if device is still active
+        if self.active.is_set():
+            self.stop()
+
 
     def get_frame(self):
         """
@@ -143,7 +169,11 @@ class Device(ABC):
 
         # if queue is not full, put frame on queue
         if self.frame_queue.full():
-            raise FrameQueueOverflowError()
+            # wait for a second for something to remove item from queue
+            logging.error("Frame Overflow")
+            self.stop_trigger.set()
+            return False
+  
         self.frame_queue.put(frame)
 
         # record frame stats
@@ -151,10 +181,11 @@ class Device(ABC):
             # this if first frame, record time
             self.frame_start_time = time.time()
         self.frame_count = self.frame_count + 1
+        return True
 
     def _check_loop(self):
         """
-        Updates stats on Device, such as frame rate, every second
+        Updates stats on Device, such as frame rate, at a slow rate
         """
 
         while(self.active.is_set()):
@@ -175,7 +206,10 @@ class Device(ABC):
             # record this check time and frame count, and wait for next loop
             self.check_time = time.time()
             self.check_frame_count = self.frame_count
-            time.sleep(10)
+            for i in range(int(self.check_time)):
+                if not self.active.is_set():
+                    return
+                time.sleep(1)
 
 
 class Frame:
@@ -193,6 +227,12 @@ class Frame:
         self.timestamp = timestamp
         self.dlc = dlc
         self.error = error
+
+    def __str__(self):
+        """
+        Override the str function
+        """
+        return "ID: {}, Data: {}, Timestamp: {}".format(self.id, self.data, self.timestamp)
 
 
 class PDOConverter:
