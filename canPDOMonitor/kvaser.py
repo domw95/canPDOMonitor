@@ -139,6 +139,7 @@ class Kvaser(Device):
             except canlib.CanNoMsg:
                 # no more messages available
                 return True
+        return False
 
 
 class KvaserError(Exception):

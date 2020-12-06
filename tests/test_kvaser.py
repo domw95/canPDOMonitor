@@ -15,11 +15,11 @@ device.start()
 
 # read 1000 frames and print to screen
 
-for i in range(4000*10):
+for i in range(4000*15):
     frame = device.get_frame()
     # time.sleep(.001)
     if frame is not None:
-        if not i % 1:
+        if not i % 4001:
             print(frame)
     else:
         break

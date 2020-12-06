@@ -171,6 +171,9 @@ class Datapoint:
         # index of datapoint since start
         self.index = index
 
+    def __str__(self):
+        return "{} = {} at t = {}".format(self.name, self.value, self.time)
+
 
 class Condition(ABC):
     """
