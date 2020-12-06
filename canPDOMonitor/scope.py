@@ -113,17 +113,23 @@ class Scope(pg.PlotItem):
     """
     Line_Colours = ["c", "m", "y", "g", "r", "b"]
 
-    def __init__(self, signal_names,
+    def __init__(self, signals,
                  nsamples=None, samplerate=None, samplelength=None,
                  trigger=None, mode=None,
                  yrange=None, title=None, time_zero=True):
         super(Scope, self).__init__()
         # store args
-        self.signal_names = signal_names
-        self.trigger = trigger
+        self.signal_names = signals
+        if trigger is not None and isinstance(trigger, dict):
+            self.trigger = ScopeTrigger(**trigger)
+        else:
+            self.trigger = trigger
         self.title = title
         if mode is None:
             self.mode = DisplayMode.Rolling
+        elif isinstance(mode, str):
+            # convert string or enum to enum type
+            self.mode = DisplayMode[mode]
         else:
             self.mode = mode
 
@@ -150,7 +156,7 @@ class Scope(pg.PlotItem):
         self.data_queue = queue.Queue()
         # buffer for holding the plot data and time values
         self.buffer = ScopeBuffer(
-            signal_names=signal_names + ["Time"],
+            signal_names=self.signal_names + ["Time"],
             ndatapoints=self.nsamples,
             mode=mode
         )
@@ -221,6 +227,7 @@ class Scope(pg.PlotItem):
         Add a list of datapoints to the data queue, potentially to be shown
         """
         self.data_queue.put(datapoints)
+        
 
     def _data_loop(self):
         """
@@ -233,6 +240,7 @@ class Scope(pg.PlotItem):
             # get next datapoitns from queue
             # logger.debug("Get next datapoint")
             datapoints = self.data_queue.get()
+            
             # end if None
             if datapoints is None:
                 break
@@ -283,7 +291,7 @@ class Scope(pg.PlotItem):
         # go through each signal and set data on plot
         # logger.debug("Updating scope")
         data = self.buffer.get_data()
-
+        # logger.debug("{}".format(data))
         if data is not None:
             for signal in self.signal_names:
                 self.plot_data_item[signal].setData(
@@ -292,6 +300,26 @@ class Scope(pg.PlotItem):
                 )
 
             # set ranges if required
+
+
+class ScopeSettings():
+    """
+    Holds scope settings for passing to Scope and sending as JSON
+    """
+    def __init__(self, signals,
+                 nsamples, samplerate,
+                 mode=None, title="", trigger=None,
+                 yrange=None, time_zero=True):
+        self.signals = signals
+        self.nsamples = nsamples
+        self.samplerate = samplerate
+        if mode is not None:
+            self.mode = str(mode)
+        self.title = title
+        if trigger is not None:
+            self.trigger = trigger.__dict__
+        if yrange is not None:
+            self.yrange = yrange
 
 
 class ScopeBuffer():
@@ -345,6 +373,7 @@ class ScopeBuffer():
         """
         with self.lock:
             # If in rolling mode, always add to live
+            
             if self.mode == DisplayMode.Rolling:
                 self._add_to_buffer(values, self.live_buffer)
                 self.updated.set()
@@ -464,7 +493,10 @@ class ScopeBuffer():
 class ScopeTrigger():
     def __init__(self, name, edge, threshold=0):
         self.name = name
-        self.edge = edge
+        if isinstance(edge, str):
+            self.edge = TriggerEdge[edge]
+        else:
+            self.edge = edge
         self.threshold = threshold
         self.prev_value = None
         self.trig_count = 0
@@ -519,6 +551,16 @@ class ScopeTrigger():
             self.prev_value = values[self.name]
 
 
+class TriggerSettings():
+    """
+    Holds trigger settings for passing to ScopeTrigger or sending as JSON
+    """
+    def __init__(self, name, edge, threshold=0):
+        self.name = name
+        self.edge = str(edge)
+        self.threshold = threshold
+
+
 class TriggerEdge(Enum):
     Rising = 1
     Falling = 2
@@ -526,6 +568,9 @@ class TriggerEdge(Enum):
     Equal = 4
     Increment = 5
     Decrement = 6
+
+    def __str__(self):
+        return self.name
 
 
 class DisplayMode(Enum):
@@ -535,6 +580,9 @@ class DisplayMode(Enum):
     Redraw = 2
     # Live update of data collection
     Sliding = 3
+
+    def __str__(self):
+        return self.name
 
 
 class NoScopesError(Exception):
