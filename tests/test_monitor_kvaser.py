@@ -20,9 +20,9 @@ monitor = Monitor(format=format, device=device)
 
 # create some dataloggers to add to Monitor
 monitor.add_datalogger(DataLogger("montest1.csv",
-                                  end_condition=TimeCondition(1)))
+                                  end_condition=TimeCondition(10)))
 monitor.add_datalogger(DataLogger("montest2.csv",
-                                  end_condition=TimeCondition(2)))
+                                  end_condition=TimeCondition(20)))
 
 for i in range(5):
     monitor.add_filter(Calibrate(

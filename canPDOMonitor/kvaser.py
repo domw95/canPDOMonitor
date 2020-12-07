@@ -2,6 +2,7 @@ from canPDOMonitor.can import Device, Frame
 from canlib import canlib
 import threading
 import time
+import logging
 
 bitrates = {
     1000000: canlib.canBITRATE_1M,
@@ -54,6 +55,8 @@ class Kvaser(Device):
         # stop the device just in case
         # self._stop()
 
+        logger.debug("Starting Kvaser")
+
         # clear the buffer
         self.ch.iocontrol.flush_rx_buffer()
 
@@ -65,6 +68,7 @@ class Kvaser(Device):
         self.read_thread.start()
 
     def _stop(self):
+        logger.debug("Stopping Kvaser")
         # clear the reading event to inidicate thread to stop
         self.reading.clear()
 
@@ -82,7 +86,9 @@ class Kvaser(Device):
         self.ch.iocontrol.flush_rx_buffer()
 
         # give the canlib a change to garbage collect
-        time.sleep(1)
+        # time.sleep(1)
+
+        logger.debug("Kvaser stopped")
 
     def _read_loop(self):
         """
@@ -97,7 +103,8 @@ class Kvaser(Device):
         # check that stop hasnt been called
         while(self.reading.is_set()):
             # Get all the messages from the device
-            self._read_messages()
+            if not self._read_messages():
+                return
             # wait for a length of time to let other threads run
             # 10ms = 40 messages
             time.sleep(0.01)
@@ -123,20 +130,23 @@ class Kvaser(Device):
 
                 # If got a frame, convert to custom frame type and place in
                 # queue
-                self._add_to_queue(Frame(id=frame.id, data=frame.data,
+                if not self._add_to_queue(Frame(id=frame.id, data=frame.data,
                                          timestamp=frame.timestamp,
-                                         dlc=frame.dlc))
+                                         dlc=frame.dlc)):
+                    return False
                 # print(type(frame.data))
 
             except canlib.CanNoMsg:
                 # no more messages available
-                return
+                return True
+        return False
 
 
 class KvaserError(Exception):
     def __init__(self, msg="Kvaser Error"):
         super().__init__(msg)
 
+logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     k = Kvaser()
@@ -146,8 +156,9 @@ if __name__ == "__main__":
         frame = k.get_frame()
         if (frame is not None):
             count = count + 1
-            print(frame.id)
+            print(frame)
         else:
             break
+    
     k.stop()
     time.sleep(1)

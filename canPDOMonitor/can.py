@@ -30,11 +30,15 @@ class Device(ABC):
 
     # maximum number of CAN frames to hold in queue
     # 4000 is 1 second of 4 PDOs at 1KHz
-    DEFAULT_QUEUE_SIZE = 4000
+    DEFAULT_QUEUE_SIZE = 8000
 
-    def __init__(self, bitrate):
+    def __init__(self, bitrate, check_loop_time=10):
+        # can bitrate of device
         self.bitrate = bitrate
+        # queue to hold can frames
         self.frame_queue = queue.Queue(maxsize=self.DEFAULT_QUEUE_SIZE)
+        # time in seconds to report device info
+        self.check_loop_time = int(check_loop_time)
 
         # total number of frames from device
         self.frame_count = 0
@@ -54,6 +58,11 @@ class Device(ABC):
         # lock for reading/changing active flag
         self.active_lock = threading.Lock()
 
+        # thread used for stopping device
+        self.stop_thread = threading.Thread(target=self.stop_check)
+        # event used to trigger device stopping
+        self.stop_trigger = threading.Event()
+
     def start(self):
         """
         To be called externally, calls _start method of class
@@ -62,7 +71,7 @@ class Device(ABC):
         then calls the device-specific _start method
         """
 
-        logger.info("Starting can Device")
+        logger.info("Starting CAN Device")
         # clear the frame queue and start device
         self.clear_queue()
 
@@ -74,6 +83,9 @@ class Device(ABC):
         # start the checking thread
         self.check_thread.start()
 
+        # start the internal stop thread
+        self.stop_thread.start()
+
     def stop(self):
         """
         To be called externally, calls _stop method of class
@@ -81,17 +93,31 @@ class Device(ABC):
         Calls the device specific _stop method
         Doesn't clear queue in case messages still need processing
         """
+        if self.active.is_set():
+            logger.debug("Stopping CAN Device")
+            # add None to queue to indicate to consumer to stop
+            self._add_to_queue(None)
 
-        logger.info("Stopping can Device")
-        # add None to queue to indicate to consumer to stop
-        self._add_to_queue(None)
+            # stop the device
+            with self.active_lock:
+                self._stop()
+                self.active.clear()
+                if self.check_thread.is_alive():
+                    self.check_thread.join()
+            # finally, stop the stop check thread
+            self.stop_trigger.set()
+            logger.info("CAN Device Stopped")
 
-        # stop the device
-        with self.active_lock:
-            self._stop()
-            self.active.clear()
-            if self.check_thread.is_alive():
-                self.check_thread.join()
+    def stop_check(self):
+        """
+        Waits for the command to stop, and calls stop, for internal threads
+        """
+        # wait for the stop trigger
+        self.stop_trigger.wait()
+        # check if device is still active
+        if self.active.is_set():
+            self.stop()
+
 
     def get_frame(self):
         """
@@ -143,7 +169,12 @@ class Device(ABC):
 
         # if queue is not full, put frame on queue
         if self.frame_queue.full():
-            raise FrameQueueOverflowError()
+            # wait for a second for something to remove item from queue
+            logging.error("CAN Device Frame Overflow")
+            logger.debug("Frame Count {}".format(self.frame_count))
+            self.stop_trigger.set()
+            return False
+  
         self.frame_queue.put(frame)
 
         # record frame stats
@@ -151,12 +182,12 @@ class Device(ABC):
             # this if first frame, record time
             self.frame_start_time = time.time()
         self.frame_count = self.frame_count + 1
+        return True
 
     def _check_loop(self):
         """
-        Updates stats on Device, such as frame rate, every second
+        Updates stats on Device, such as frame rate, at a slow rate
         """
-
         while(self.active.is_set()):
             # if this is not the first run
             if self.check_time is not None:
@@ -167,15 +198,17 @@ class Device(ABC):
                 total_frame_rate = round(
                     self.frame_count / (time.time() - self.frame_start_time))
 
-                logger.debug("Frame Rate: {}, Total Rate {}, Frame Count {}".
-                             format(self.frame_rate,
-                                    total_frame_rate,
-                                    self.frame_count))
+                logger.debug("CAN Frame Rate: {}, Frame Count {}, Queue: {}".
+                             format(total_frame_rate,
+                                    self.frame_count, self.frame_queue.qsize()))
 
             # record this check time and frame count, and wait for next loop
             self.check_time = time.time()
             self.check_frame_count = self.frame_count
-            time.sleep(10)
+            for i in range(self.check_loop_time):
+                if not self.active.is_set():
+                    break
+                time.sleep(1)
 
 
 class Frame:
@@ -194,6 +227,12 @@ class Frame:
         self.dlc = dlc
         self.error = error
 
+    def __str__(self):
+        """
+        Override the str function
+        """
+        return "ID: {}, Data: {}, Timestamp: {}".format(self.id, self.data, self.timestamp)
+
 
 class PDOConverter:
     """
@@ -205,9 +244,10 @@ class PDOConverter:
     :type device: :class:`can.Device`
     """
 
-    def __init__(self, device, format):
+    def __init__(self, device, format, check_loop_time=10):
         self.device = device
         self.format = format
+        self.check_loop_time = check_loop_time
 
         # thread for pulling frames from device
         self.read_thread = threading.Thread(target=self._read_loop)
@@ -234,18 +274,36 @@ class PDOConverter:
         self.datapoints = []
 
         # queue with each item a list of datapoints at a particular timestep
-        self.data_queue = queue.Queue()
+        self.data_queue = queue.Queue(maxsize=1000)
 
         # current index of datapoint timestep
         self.data_count = 0
+        self.check_data_count = 0
+
+        # marks the pdo converter as active 
+        self.active = threading.Event()
+        # thread to stop the device internally
+        self.stop_thread = threading.Thread(target=self.stop_check)
+        self.stop_trigger = threading.Event()
+
+        # check loop
+        self.check_thread = threading.Thread(target=self._check_loop)
+        self.check_time = None
+        self.check_frame_count = 0
+        self.frame_start_time = None
 
     def start(self):
         """
         Starts the CAN hardware device and a thread to read the frames
         """
+        logger.info("Starting PDO Converter")
+        self.active.set()
+        self.read_thread.start()
+        self.stop_thread.start()
+        self.check_thread.start()
         self.device.start()
         self.state = "Starting"
-        self.read_thread.start()
+        logger.info("Started PDO Converter")
 
     def stop(self):
         """
@@ -254,18 +312,33 @@ class PDOConverter:
         Current implmentation will read at most 1 or 2 more can frames from
         queue before stopping
         """
+        
+        if self.active.is_set():
+            logger.debug("Stopping PDO Converter")
+            # Pop None on the queue to indicate to consumer that stop is called
+            self.active.clear()
+            self.stop_trigger.set()
+            self.data_queue.put(None)
 
-        # Pop None on the queue to indicate to consumer that stop is called
-        self.data_queue.put(None)
-
-        # Call for underlying device to stop and wait for thread to end
-        self.device.stop()
-        self.read_active.clear()
-        if self.read_thread.is_alive():
-            self.read_thread.join(timeout=1)
+            # Call for underlying device to stop and wait for thread to end
+            self.device.stop()
+            self.read_active.clear()
             if self.read_thread.is_alive():
-                # error ending thread, do something
-                raise ThreadCloseError("PDO Converter read thread not closing")
+                self.read_thread.join(timeout=1)
+                if self.read_thread.is_alive():
+                    # error ending thread, do something
+                    raise ThreadCloseError("PDO Converter read thread not closing")
+            logger.info("Stopped PDO Converter")
+
+    def stop_check(self):
+        """
+        Waits for the command to stop, and calls stop, for internal threads
+        """
+        # wait for the stop trigger
+        self.stop_trigger.wait()
+        # check if device is still active
+        if self.active.is_set():
+            self.stop()
 
     def get_datapoints(self):
         """
@@ -289,10 +362,13 @@ class PDOConverter:
 
             # if None, device is disabled, end read thread
             if (frame is None):
+                logger.info("PDO converter: Device has stopped")
+                self.stop_trigger.set()
                 break
 
             # check if frame is of interest
             if frame.id not in self.format.order:
+                logger.debug("Frame {} not used".format(frame))
                 continue
 
             # if still in starting mode
@@ -301,7 +377,9 @@ class PDOConverter:
                 continue
 
             # pass the frame to processor
-            self._process_frame(frame)
+            if not self._process_frame(frame):
+                # Exit loop if it was unable to place a frame on the queue
+                break
 
         self.read_active.clear()
 
@@ -327,16 +405,27 @@ class PDOConverter:
 
             # check if at end of timestep
             if frame.id == self.format.order[-1]:
-                # place datapoint list onto queue for consumer
-                self.data_queue.put(self.datapoints.copy())
+                if self.data_queue.full():
+                    # queue overflow
+                    # stop the device from reading can frames
+                    logger.error("PDO conveter queue full")
+                    self.device.stop()
+                    # stop the pdo converter
+                    self.stop_trigger.set()
+                    return False
+                else:
+                    # place datapoint list onto queue for consumer
+                    self.data_queue.put(self.datapoints.copy())
 
                 # clear the list
                 self.datapoints = []
 
                 # increment counter
                 self.data_count = self.data_count + 1
-
+            if self.frame_start_time is None:
+                self.frame_start_time = time.time()
             self.frame_count = self.frame_count + 1
+        return True
 
     def _check_frame_order(self, frame):
         """
@@ -390,6 +479,33 @@ class PDOConverter:
             # add the datapoint to the list
             self.datapoints.append(datapoint)
 
+    def _check_loop(self):
+        """
+        Prints debug info at slow rate in its own thread
+        """
+        while(self.active.is_set()):
+            # if this is not the first run
+            if self.check_time is not None and self.frame_start_time is not None:
+                # calc frame rate
+                frame_count = self.frame_count - self.check_frame_count
+                data_count = self.data_count - self.check_data_count
+                elapsed_time = time.time() - self.check_time
+                self.frame_rate = round(frame_count / elapsed_time)
+                self.data_rate =  round(data_count / elapsed_time)
+                total_frame_rate = round(
+                    self.frame_count / (time.time() - self.frame_start_time))
+
+                logger.debug("PDO Frame Rate: {}, Data Rate: {}, Queue: {}".
+                             format(total_frame_rate, self.data_rate, self.data_queue.qsize()))
+
+            # record this check time and frame count, and wait for next loop
+            self.check_time = time.time()
+            self.check_frame_count = self.frame_count
+            self.check_data_count = self.data_count
+            for i in range(self.check_loop_time):
+                if not self.active.is_set():
+                    break
+                time.sleep(1)
 
 class Format:
     """
